@@ -1,0 +1,33 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --watch src/app.ts",
+    "build:server": "tsc",
+    "build:client": "cd ../client && npm run build && cd ../server",
+    "copyfiles": "copyfiles -u 3 ../client/dist/**/* src/view",
+    "build:all": "npm run build:client && npm run copyfiles && npm run build:server",
+    "start": "node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.7",
+    "copyfiles": "^2.4.1",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0"
+  },
+  "dependencies": {
+    "express": "4.21.1"
+  }
+}
