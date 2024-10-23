@@ -1,0 +1,49 @@
+### VSCode extension: REST Client
+### Desktop apps: Yaak, Postman
+
+### Create user
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+  "name": "lisa",
+  "password": "abcdefg",
+  "anything": 20
+}
+
+### Create user passing invalid body
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+  "anything": 20
+}
+
+### Login
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "name": "lisa",
+  "password": "abcdefg"
+}
+
+### Login with unregistered user
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "name": "invalid-username",
+  "password": "abcdefg"
+}
+
+### Login with invalid password
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "name": "lisa",
+  "password": "invalid-password"
+}
+
+###
