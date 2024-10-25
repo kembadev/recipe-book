@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
   "name": "lisa",
-  "password": "abcdefg",
+  "password": "Abcdefg1",
   "anything": 20
 }
 
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 {
   "name": "lisa",
-  "password": "abcdefg"
+  "password": "Abcdefg1"
 }
 
 ### Login with unregistered user

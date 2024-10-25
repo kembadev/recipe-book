@@ -1,7 +1,12 @@
 {
-  "a240f6d5-bd3c-465d-9ed3-4a22c241f6c1": {
+  "342e2ecb-3cf2-4e43-9884-8504232b849b": {
     "name": "lisa",
-    "password": "$2b$04$uKVhcU.Pcllh06iMBtYdfeNKfkstY3hA.pfPR8ryE67koBlgQxMZe",
-    "createdAt": "2024-10-23T19:23:52.570Z"
+    "password": "$2b$04$6NlfO1c/23K16kdmy3y37OO6xK4.0NteIuDngllviJbPGcfyNXA0C",
+    "createdAt": "2024-10-24T22:35:43.989Z"
+  },
+  "92895504-09ed-4f1e-bee2-450e3ab24b51": {
+    "name": "fredo",
+    "password": "$2b$04$8zamieHlit1JpCset6CRk.wRtddo3ewmtdQhgyvQLxElovSaFVuQO",
+    "createdAt": "2024-10-25T19:16:53.692Z"
   }
 }

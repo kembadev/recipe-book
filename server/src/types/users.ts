@@ -1,11 +1,11 @@
-export type User = {
+export interface User {
 	name: string;
 	password: string;
 	createdAt: string;
-};
+}
 
 export type ProvidedUserInfo = Omit<User, 'createdAt'>;
-type PublicUser = Pick<User, 'name' | 'createdAt'>;
+export type PublicUser = Pick<User, 'name' | 'createdAt'>;
 
 export type UserResult =
 	| Error
