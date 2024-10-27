@@ -42,9 +42,6 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.7
         version: 9.0.7
-      '@types/node':
-        specifier: ^22.7.7
-        version: 22.7.9
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1

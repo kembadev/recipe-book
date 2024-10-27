@@ -37,7 +37,7 @@ interface Response<T extends ResponseType> {
 	details: Details<T>;
 }
 
-export class ResponseSquema<T extends ResponseType> implements Response<T> {
+export class ResponseSchema<T extends ResponseType> implements Response<T> {
 	success: Success<T>;
 	data: Data<T>;
 	message: string;
@@ -59,7 +59,7 @@ export class ResponseSquema<T extends ResponseType> implements Response<T> {
 		data: unknown;
 		message?: string | null;
 	}) {
-		return new ResponseSquema<SuccessfulResponse>({
+		return new ResponseSchema<SuccessfulResponse>({
 			success: true,
 			data,
 			message: message ?? 'Request successful',
@@ -77,7 +77,7 @@ export class ResponseSquema<T extends ResponseType> implements Response<T> {
 		details?: unknown;
 		errorCode: ERROR_CODES;
 	}) {
-		return new ResponseSquema<FailedResponse>({
+		return new ResponseSchema<FailedResponse>({
 			success: false,
 			data: null,
 			message,

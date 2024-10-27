@@ -1,8 +1,8 @@
 import type { Handler } from '../types/express.js';
 import { IS_DEVELOPMENT, SECRET_JWT_KEY } from '../config.js';
 
-import { ResponseSquema, ERROR_CODES } from '../helpers/ResponseSquema.js';
-import { validateUserRegister, validateUserLogin } from '../squemas/users.js';
+import { ResponseSchema, ERROR_CODES } from '../helpers/ResponseSchema.js';
+import { validateUserRegister, validateUserLogin } from '../schemas/users.js';
 
 import { UsersModule } from '../model/users-local.js';
 
@@ -18,7 +18,7 @@ export class UsersController {
 
 		if (!isValidUser) {
 			res.status(422).json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Invalid request body format.',
 					errorCode: ERROR_CODES.INVALID_PARAMS,
 					details: JSON.parse(validationError.message),
@@ -32,7 +32,7 @@ export class UsersController {
 
 		if (result instanceof Error) {
 			res.status(500).json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Could not create the user.',
 					errorCode: ERROR_CODES.INTERNAL_ERROR,
 				}),
@@ -43,7 +43,7 @@ export class UsersController {
 
 		if (result.success) {
 			res.json(
-				ResponseSquema.success({
+				ResponseSchema.success({
 					data: result.value,
 				}),
 			);
@@ -52,7 +52,7 @@ export class UsersController {
 		}
 
 		res.status(409).json(
-			ResponseSquema.failed({
+			ResponseSchema.failed({
 				message: 'Could not create the user.',
 				errorCode: ERROR_CODES.OTHERS,
 				details: result.paramsError,
@@ -65,7 +65,7 @@ export class UsersController {
 
 		if (!isValidUser) {
 			res.status(422).json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Invalid request body format.',
 					errorCode: ERROR_CODES.INVALID_PARAMS,
 					details: JSON.parse(error.message),
@@ -79,7 +79,7 @@ export class UsersController {
 
 		if (result instanceof Error) {
 			res.status(500).json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Could not complete the login.',
 					errorCode: ERROR_CODES.INTERNAL_ERROR,
 				}),
@@ -93,7 +93,7 @@ export class UsersController {
 			const statusCode = paramsError?.password ? 401 : 400;
 
 			res.status(statusCode).json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Could not complete the login.',
 					errorCode: ERROR_CODES.OTHERS,
 					details: paramsError,
@@ -117,7 +117,7 @@ export class UsersController {
 			console.error(err);
 
 			res.json(
-				ResponseSquema.failed({
+				ResponseSchema.failed({
 					message: 'Something went wrong.',
 					errorCode: ERROR_CODES.INTERNAL_ERROR,
 				}),
@@ -134,7 +134,7 @@ export class UsersController {
 				maxAge: 1000 * 60 * 60,
 			})
 			.json(
-				ResponseSquema.success({
+				ResponseSchema.success({
 					data: user,
 				}),
 			);
@@ -142,7 +142,7 @@ export class UsersController {
 
 	static logout: Handler = (_req, res) => {
 		res.clearCookie('access_token').json(
-			ResponseSquema.success({
+			ResponseSchema.success({
 				message: 'Logout successful.',
 				data: null,
 			}),

@@ -1,0 +1,30 @@
+form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  color: var(--dark-main-text-color);
+  font-size: 1.35rem;
+
+  border: 2px solid var(--dark-border-color);
+  border-radius: 10px;
+
+  padding: 15px;
+  padding-top: 8px;
+
+  legend {
+    font-size: 1.25em;
+    font-weight: bold;
+  }
+
+  button[type="submit"] {
+    color: inherit;
+    background-color: var(--blue);
+    border: none;
+    outline: none;
+    border-radius: inherit;
+    font-size: 1.5em;
+    padding: 2px;
+    cursor: pointer;
+  }
+}

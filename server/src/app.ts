@@ -3,7 +3,7 @@ import { PORT } from './config.js';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-import { ResponseSquema, ERROR_CODES } from './helpers/ResponseSquema.js';
+import { ResponseSchema, ERROR_CODES } from './helpers/ResponseSchema.js';
 import { apiRouter } from './routes/index.js';
 
 import express from 'express';
@@ -28,7 +28,7 @@ app.get('*', (_req, res) => {
 
 app.use((_req, res) => {
 	res.status(404).json(
-		ResponseSquema.failed({
+		ResponseSchema.failed({
 			message: 'Resource not found.',
 			errorCode: ERROR_CODES.NOT_FOUND,
 		}),

@@ -42,7 +42,10 @@ export class UsersModule {
 		const wasCreated = Array.isArray(await UsersDB.findOne(key));
 
 		return wasCreated
-			? { success: true, value }
+			? {
+					success: true,
+					value: { name: value.name, createdAt: value.createdAt },
+				}
 			: new Error('Something went wrong.');
 	}
 

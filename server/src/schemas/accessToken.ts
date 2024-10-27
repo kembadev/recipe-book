@@ -1,5 +1,5 @@
 import z from 'zod';
-import { userSquemaBase } from './users.js';
+import { userSchemaBase } from './users.js';
 
 const utcDateSchema = z
 	.string()
@@ -8,12 +8,12 @@ const utcDateSchema = z
 		'Invalid date in UTC format.',
 	);
 
-const accessTokenSquemaBase = z.object({
+const accessTokenSchemaBase = z.object({
 	createdAt: utcDateSchema,
 });
 
-const accessTokenSquema = userSquemaBase.merge(accessTokenSquemaBase);
+const accessTokenSchema = userSchemaBase.merge(accessTokenSchemaBase);
 
 export function validateAccessToken(tokenData: unknown) {
-	return accessTokenSquema.safeParse(tokenData);
+	return accessTokenSchema.safeParse(tokenData);
 }
