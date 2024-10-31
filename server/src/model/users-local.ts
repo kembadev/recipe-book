@@ -1,20 +1,19 @@
-import type { User, ProvidedUserInfo, UserResult } from '../types/users.js';
-import UsersDB from '../db/local/users.mjs';
-import bcrypt from 'bcrypt';
-import { randomUUID } from 'node:crypto';
+import type { User, CreateUser, LoginUser } from '../types/users.js';
 import { SALT_ROUNDS } from '../config.js';
 
-export class UsersModule {
-	static async create({
-		name,
-		password,
-	}: ProvidedUserInfo): Promise<UserResult> {
-		const isNameAvailable =
-			(await UsersDB.findOne(
-				(_key, { name: nameInUse }) => nameInUse === name,
-			)) === undefined;
+import UsersDB from '../db/local/users.mjs';
 
-		if (!isNameAvailable) {
+import bcrypt from 'bcrypt';
+
+export class UsersModule {
+	static create: CreateUser = async ({ name, password }) => {
+		const userInDB = await UsersDB.findOne(
+			(_id, { name: nameInUse }) => nameInUse === name,
+		);
+
+		if (userInDB instanceof Error) return userInDB;
+
+		if (userInDB !== undefined) {
 			return {
 				success: false,
 				paramsError: {
@@ -25,39 +24,38 @@ export class UsersModule {
 
 		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-		const value: User = {
+		const newUser: User = {
 			name,
 			password: hashedPassword,
 			createdAt: new Date().toISOString(),
+			savedRecipes: [],
+			createdRecipes: [],
 		};
 
-		let key = randomUUID();
-		let result = await UsersDB.addOne({ key, value });
+		const _id = await UsersDB.addOne(newUser);
 
-		while (typeof result === 'string') {
-			key = randomUUID();
-			result = await UsersDB.addOne({ key, value });
-		}
-
-		const wasCreated = Array.isArray(await UsersDB.findOne(key));
-
-		return wasCreated
-			? {
+		return typeof _id !== 'string'
+			? _id
+			: {
 					success: true,
-					value: { name: value.name, createdAt: value.createdAt },
-				}
-			: new Error('Something went wrong.');
-	}
+					value: {
+						id: _id,
+						name: newUser.name,
+						createdAt: newUser.createdAt,
+						createdRecipes: [],
+						savedRecipes: [],
+					},
+				};
+	};
 
-	static async login({
-		name,
-		password,
-	}: ProvidedUserInfo): Promise<UserResult> {
-		const item = await UsersDB.findOne(
-			(_key, { name: nameInUse }) => nameInUse === name,
+	static login: LoginUser = async ({ name, password }) => {
+		const user = await UsersDB.findOne(
+			(_id, { name: nameInUse }) => nameInUse === name,
 		);
 
-		if (item === undefined) {
+		if (user instanceof Error) return user;
+
+		if (user === undefined) {
 			return {
 				success: false,
 				paramsError: {
@@ -66,15 +64,23 @@ export class UsersModule {
 			};
 		}
 
-		if (item instanceof Error) {
-			return new Error('Something went wrong.');
-		}
-
-		const { password: hashedPassword, ...rest } = item[1];
+		const [_id, userData] = user;
+		const { password: hashedPassword, ...restOfTheUser } = userData;
 
 		const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
-		if (isValidPassword) return { success: true, value: rest };
+		if (isValidPassword) {
+			return {
+				success: true,
+				value: {
+					id: _id,
+					name: restOfTheUser.name,
+					createdAt: restOfTheUser.createdAt,
+					createdRecipes: restOfTheUser.createdRecipes,
+					savedRecipes: restOfTheUser.savedRecipes,
+				},
+			};
+		}
 
 		return {
 			success: false,
@@ -82,5 +88,5 @@ export class UsersModule {
 				password: 'Invalid password.',
 			},
 		};
-	}
+	};
 }

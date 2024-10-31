@@ -32,6 +32,8 @@ const userRegisterSchema = userSchemaBase.merge(
 	}),
 );
 
+export type UserRegisterSchema = z.infer<typeof userRegisterSchema>;
+
 const userLoginSchema = userSchemaBase.merge(
 	z.object({
 		password: passwordSchemaBase,

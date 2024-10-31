@@ -1,30 +1,31 @@
-import type { Handler } from '../types/express.js';
-import type { PublicUser } from 'types/users.js';
+import type { RequestHandler } from 'express';
 import { SECRET_JWT_KEY } from '../config.js';
 import { validateAccessToken } from '../schemas/accessToken.js';
 import jwt from 'jsonwebtoken';
 
-export const sessionMiddleware: Handler = (req, _res, next) => {
-	const token = req.cookies.access_token;
+const options: jwt.VerifyOptions = {
+	maxAge: '1h',
+};
 
-	try {
-		if (typeof SECRET_JWT_KEY !== 'string') {
-			throw new Error(
-				'SECRET_JWT_KEY may not be defined. Set it in the .env file',
-			);
-		}
+export const sessionMiddleware: RequestHandler = (req, _res, next) => {
+	req.session = { user: null };
 
-		const tokenData = jwt.verify(token, SECRET_JWT_KEY);
-		const { success, data } = validateAccessToken(tokenData);
-
-		if (!success) throw Error('Invalid token data.');
-
-		req.session = { user: data as PublicUser };
-	} catch (err) {
-		if (typeof SECRET_JWT_KEY !== 'string') console.error(err);
-
-		req.session = { user: null };
+	if (typeof SECRET_JWT_KEY !== 'string') {
+		console.error('SECRET_JWT_KEY may not be defined. Set it in the .env file');
+		return next();
 	}
 
-	next();
+	const token = req.cookies.access_token;
+
+	jwt.verify(token, SECRET_JWT_KEY, options, (err, payload) => {
+		if (err) return next();
+
+		const { success, data } = validateAccessToken(payload);
+
+		if (success) {
+			req.session = { user: data };
+		}
+
+		next();
+	});
 };

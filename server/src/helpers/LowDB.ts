@@ -1,8 +1,11 @@
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+
 import { Result } from '../utils/Result.js';
 
 class LocalDBError extends Error {
@@ -20,8 +23,8 @@ interface LocalDBConfig<T> {
 	initialData?: DB<T>;
 }
 
-type Matcher<Q> = string | ((key: string, value: Q) => boolean);
-type Item<Q> = [key: string, value: Q];
+type Matcher<Q> = string | ((_id: string, value: Q) => boolean);
+type Item<Q> = [_id: string, value: Q];
 
 export class LocalDB<Q> {
 	#path: string;
@@ -42,7 +45,7 @@ export class LocalDB<Q> {
 		}
 
 		try {
-			await this.#db.read();
+			await this.#db.read(); // -> this.#db.data will potentially cause memory to be out of bounds
 			return Result.success(null);
 		} catch {
 			return Result.failed(
@@ -57,13 +60,14 @@ export class LocalDB<Q> {
 		if (!success) return error;
 
 		this.#db.data = fn(this.#db.data);
-		await this.#db.write();
+		await this.#db.write(); // -> will potentially become too slow
+
 		return null;
 	}
 
 	async findOne(
 		matcher: Matcher<Q>,
-	): Promise<[key: string, value: Q] | Error | undefined> {
+	): Promise<[_id: string, value: Q] | LocalDBError | undefined> {
 		const { success, error } = await this.#read();
 
 		if (!success) return error;
@@ -75,21 +79,30 @@ export class LocalDB<Q> {
 			return value === undefined ? undefined : [matcher, value];
 		}
 
-		const keys = Object.keys(data);
-		for (const key of keys) {
-			const value = data[key];
-			if (matcher(key, value)) return [key, value];
+		for (const _id in data) {
+			if (!Object.hasOwn(data, _id)) continue;
+
+			const value = data[_id];
+
+			if (matcher(_id, value)) return [_id, value];
 		}
 
 		return undefined;
 	}
 
-	async addOne({ key, value }: { key: string; value: Q }) {
-		const item = await this.findOne(key);
+	async addOne(value: Q) {
+		let _id = randomUUID();
+		let item = await this.findOne(_id);
 
-		if (Array.isArray(item)) return 'Key already in use.' as const;
+		while (Array.isArray(item)) {
+			_id = randomUUID();
+			item = await this.findOne(_id);
+		}
 
-		return await this.#updateDB(db => ({ ...db, [key]: value }));
+		const result =
+			item ?? (await this.#updateDB(db => ({ ...db, [_id]: value }))) ?? _id;
+
+		return result;
 	}
 
 	async removeOne(matcher: Matcher<Q>) {
@@ -97,33 +110,33 @@ export class LocalDB<Q> {
 
 		if (!Array.isArray(item)) return item;
 
-		const [key] = item;
+		const [_id] = item;
 
 		return new Promise<Q>(resolve => {
 			this.#updateDB(db => {
-				const { [key]: itemRemoved, ...rest } = db;
+				const { [_id]: itemRemoved, ...rest } = db;
 				resolve(itemRemoved);
 				return rest;
 			});
 		});
 	}
 
-	async updateOne(matcher: Matcher<Q>, fn: (item: Item<Q>) => Item<Q>) {
+	async updateOne(matcher: Matcher<Q>, fn: (value: Q) => Q) {
 		const item = await this.findOne(matcher);
 
 		if (!Array.isArray(item)) return item;
 
-		const [key] = item;
+		const _id = item[0];
 
 		return new Promise<Item<Q>>(resolve => {
 			this.#updateDB(db => {
-				const { [key]: value, ...rest } = db;
+				const { [_id]: value, ...rest } = db;
 
-				const updatedItem = fn([key, value]);
-				resolve(updatedItem);
-				const [updatedKey, updatedValue] = updatedItem;
+				const updatedValue = fn(value);
 
-				return { ...rest, [updatedKey]: updatedValue };
+				resolve([_id, updatedValue]);
+
+				return { ...rest, [_id]: updatedValue };
 			});
 		});
 	}

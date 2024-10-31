@@ -1,4 +1,5 @@
-import type { Handler } from '../types/express.js';
+import type { RequestHandler } from 'express';
+
 import { IS_DEVELOPMENT, SECRET_JWT_KEY } from '../config.js';
 
 import { ResponseSchema, ERROR_CODES } from '../helpers/ResponseSchema.js';
@@ -9,7 +10,7 @@ import { UsersModule } from '../model/users-local.js';
 import jwt from 'jsonwebtoken';
 
 export class UsersController {
-	static create: Handler = async (req, res) => {
+	static create: RequestHandler = async (req, res) => {
 		const {
 			success: isValidUser,
 			error: validationError,
@@ -42,7 +43,7 @@ export class UsersController {
 		}
 
 		if (result.success) {
-			res.json(
+			res.status(201).json(
 				ResponseSchema.success({
 					data: result.value,
 				}),
@@ -60,7 +61,7 @@ export class UsersController {
 		);
 	};
 
-	static login: Handler = async (req, res) => {
+	static login: RequestHandler = async (req, res) => {
 		const { success: isValidUser, error, data } = validateUserLogin(req.body);
 
 		if (!isValidUser) {
@@ -90,7 +91,7 @@ export class UsersController {
 
 		if (!result.success) {
 			const { paramsError } = result;
-			const statusCode = paramsError?.password ? 401 : 400;
+			const statusCode = paramsError.password ? 401 : 400;
 
 			res.status(statusCode).json(
 				ResponseSchema.failed({
@@ -105,6 +106,7 @@ export class UsersController {
 
 		const user = result.value;
 		let token: string;
+
 		try {
 			if (typeof SECRET_JWT_KEY !== 'string') {
 				throw new Error(
@@ -116,7 +118,7 @@ export class UsersController {
 		} catch (err) {
 			console.error(err);
 
-			res.json(
+			res.status(500).json(
 				ResponseSchema.failed({
 					message: 'Something went wrong.',
 					errorCode: ERROR_CODES.INTERNAL_ERROR,
@@ -140,7 +142,7 @@ export class UsersController {
 			);
 	};
 
-	static logout: Handler = (_req, res) => {
+	static logout: RequestHandler = (_req, res) => {
 		res.clearCookie('access_token').json(
 			ResponseSchema.success({
 				message: 'Logout successful.',

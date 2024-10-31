@@ -21,6 +21,7 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
     "copyfiles": "^2.4.1",
     "dotenv": "^16.4.5",
     "eslint": "^9.13.0",
@@ -35,6 +36,7 @@
     "express": "4.21.1",
     "jsonwebtoken": "9.0.2",
     "lowdb": "7.0.1",
+    "multer": "1.4.5-lts.1",
     "zod": "3.23.8"
   }
 }

@@ -22,8 +22,8 @@ form fieldset {
     background-color: var(--blue);
     border: none;
     outline: none;
-    border-radius: inherit;
-    font-size: 1.5em;
+    border-radius: 25px;
+    font-size: 1.15em;
     padding: 2px;
     cursor: pointer;
   }

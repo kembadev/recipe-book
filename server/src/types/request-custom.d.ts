@@ -1,9 +1,9 @@
-import type { PublicUser } from './users.ts';
+import type { TokenPayloadUser } from './users.ts';
 
 declare global {
 	namespace Express {
 		interface Request {
-			session: { user: PublicUser | null };
+			session: { user: TokenPayloadUser | null };
 		}
 	}
 }
