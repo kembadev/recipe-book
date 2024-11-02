@@ -39,7 +39,6 @@ export class UsersModule {
 			: {
 					success: true,
 					value: {
-						id: _id,
 						name: newUser.name,
 						createdAt: newUser.createdAt,
 						createdRecipes: [],
@@ -69,23 +68,25 @@ export class UsersModule {
 
 		const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
-		if (isValidPassword) {
+		if (!isValidPassword) {
 			return {
-				success: true,
-				value: {
-					id: _id,
-					name: restOfTheUser.name,
-					createdAt: restOfTheUser.createdAt,
-					createdRecipes: restOfTheUser.createdRecipes,
-					savedRecipes: restOfTheUser.savedRecipes,
+				success: false,
+				paramsError: {
+					password: 'Invalid password.',
 				},
 			};
 		}
 
 		return {
-			success: false,
-			paramsError: {
-				password: 'Invalid password.',
+			success: true,
+			value: {
+				userId: _id,
+				userData: {
+					name: restOfTheUser.name,
+					createdAt: restOfTheUser.createdAt,
+					createdRecipes: restOfTheUser.createdRecipes,
+					savedRecipes: restOfTheUser.savedRecipes,
+				},
 			},
 		};
 	};

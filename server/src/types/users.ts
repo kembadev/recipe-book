@@ -9,9 +9,11 @@ export interface User extends UserRegisterSchema {
 export type PrivateUser = Pick<
 	User,
 	'name' | 'createdAt' | 'createdRecipes' | 'savedRecipes'
-> & { id: string };
+>;
 
-export type TokenPayloadUser = Pick<PrivateUser, 'id'>;
+export interface TokenPayloadUser {
+	id: string;
+}
 
 export type PublicUser = Pick<
 	PrivateUser,
@@ -34,7 +36,7 @@ export type CreateUser = (userInfo: ProvidedUserInfoRegister) => Promise<
 
 export type LoginUser = (userInfo: ProvidedUserInfoLogin) => Promise<
 	| Error
-	| { success: true; value: PrivateUser }
+	| { success: true; value: { userData: PrivateUser; userId: string } }
 	| {
 			success: false;
 			paramsError: Partial<Record<keyof ProvidedUserInfoLogin, string>>;

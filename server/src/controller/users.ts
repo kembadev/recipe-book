@@ -91,7 +91,7 @@ export class UsersController {
 
 		if (!result.success) {
 			const { paramsError } = result;
-			const statusCode = paramsError.password ? 401 : 400;
+			const statusCode = paramsError.password ? 401 : 404;
 
 			res.status(statusCode).json(
 				ResponseSchema.failed({
@@ -104,7 +104,7 @@ export class UsersController {
 			return;
 		}
 
-		const user = result.value;
+		const { userData, userId } = result.value;
 		let token: string;
 
 		try {
@@ -114,7 +114,7 @@ export class UsersController {
 				);
 			}
 
-			token = jwt.sign(user, SECRET_JWT_KEY, { expiresIn: '1h' });
+			token = jwt.sign({ id: userId }, SECRET_JWT_KEY, { expiresIn: '1h' });
 		} catch (err) {
 			console.error(err);
 
@@ -137,7 +137,7 @@ export class UsersController {
 			})
 			.json(
 				ResponseSchema.success({
-					data: user,
+					data: userData,
 				}),
 			);
 	};

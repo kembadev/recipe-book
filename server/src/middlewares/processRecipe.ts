@@ -1,8 +1,9 @@
 import type { ErrorRequestHandler } from 'express';
+import fs from 'node:fs';
 
 import multer from 'multer';
 import path from 'node:path';
-import { ERROR_CODES, ResponseSchema } from 'helpers/ResponseSchema.js';
+import { ERROR_CODES, ResponseSchema } from '../helpers/ResponseSchema.js';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,23 +11,27 @@ const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
 	destination: (_req, _file, cb) => {
-		cb(null, path.join(__dirname, '../db/uploads/recipes-images'));
+		const pathUrl = path.join(__dirname, '../db/uploads/recipes-images');
+
+		if (!fs.existsSync(pathUrl)) {
+			fs.mkdirSync(pathUrl, { recursive: true });
+		}
+
+		cb(null, pathUrl);
 	},
 	filename: (_req, file, cb) => {
-		const UTC = new Date().toISOString();
+		const extension = file.originalname.split('.').at(-1);
+
+		const ModifiedUTC = new Date().toISOString().replace(/:/g, '-'); // because Windows
 		const randomInt = Math.round(Math.random() * 1e6);
 
-		const uniqueSuffix = UTC + '__' + randomInt;
+		const filename = ModifiedUTC + '__' + randomInt + '.' + extension;
 
-		const modifiedFilename = file.originalname
-			.slice(0, 50)
-			.replace(/\s+/g, '-');
-
-		cb(null, uniqueSuffix + '__' + modifiedFilename);
+		cb(null, filename);
 	},
 });
 
-export const processRecipe = multer({
+export const processRecipeMiddleware = multer({
 	storage,
 	fileFilter: (_req, file, cb) => {
 		if (/^image/.test(file.mimetype)) {
@@ -41,7 +46,7 @@ export const processRecipe = multer({
 	},
 }).single('image');
 
-export const processRecipeErrorHandling: ErrorRequestHandler = (
+export const processRecipeErrorMiddleware: ErrorRequestHandler = (
 	err,
 	_req,
 	res,

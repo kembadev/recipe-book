@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+process.loadEnvFile();
 
 const PORT = process.env.PORT ?? 3000;
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';

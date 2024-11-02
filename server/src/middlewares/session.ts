@@ -17,6 +17,8 @@ export const sessionMiddleware: RequestHandler = (req, _res, next) => {
 
 	const token = req.cookies.access_token;
 
+	if (typeof token !== 'string') return next();
+
 	jwt.verify(token, SECRET_JWT_KEY, options, (err, payload) => {
 		if (err) return next();
 

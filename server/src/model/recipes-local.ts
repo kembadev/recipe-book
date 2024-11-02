@@ -63,9 +63,12 @@ export class RecipesModule {
 		if (recipeOwner instanceof Error) return recipeOwner;
 
 		if (userId === recipeData.createdBy) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { createdBy, ...rest } = recipeData;
+
 			return {
 				isPartialBody: false,
-				value: recipeData,
+				value: rest,
 			};
 		}
 

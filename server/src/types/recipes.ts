@@ -1,19 +1,22 @@
 import type { RecipeSquema } from '../schemas/recipes.js';
 
 export interface Recipe extends RecipeSquema {
+	image_url: string | null;
 	createdBy: string;
 	createdAt: string;
 	lastEdit: string;
 }
 
-export type PublicRecipe = Omit<Recipe, 'createdBy' | 'visibility'> & {
+export type PrivateRecipe = Omit<Recipe, 'createdBy'>;
+
+export type PublicRecipe = Omit<PrivateRecipe, 'createdBy' | 'visibility'> & {
 	creator: string | null;
 };
 
 // Module
 
 export type CreateRecipe = (info: {
-	data: RecipeSquema;
+	data: RecipeSquema & { image_url: string | null };
 	userId: string;
 }) => Promise<
 	| Error
@@ -28,5 +31,5 @@ export type GetById = (info: {
 	| Error
 	| undefined
 	| { isPartialBody: true; value: PublicRecipe }
-	| { isPartialBody: false; value: Recipe }
+	| { isPartialBody: false; value: PrivateRecipe }
 >;

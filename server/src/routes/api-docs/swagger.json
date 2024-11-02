@@ -1,0 +1,1013 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Recipe management API",
+    "version": "1.0.0",
+    "description": "This API provides the necessary endpoints to manage the users and recipes within the app (recipe-book). It allows users to register, log in, create, update, delete and search for recipes. The API is designed to integrate with the app frontend."
+  },
+  "components": {
+    "responses": {
+      "500InternalError": {
+        "description": "Something went wrong and the expected behavior for the request was not met.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "enum": [
+                    null
+                  ]
+                },
+                "errorCode": {
+                  "type": "string",
+                  "default": "INTERNAL_ERROR"
+                },
+                "details": {
+                  "enum": [
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "summary": "Create a user",
+        "responses": {
+          "201": {
+            "description": "Register successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "createdRecipes": {
+                          "type": "array",
+                          "default": []
+                        },
+                        "savedRecipes": {
+                          "type": "array",
+                          "default": []
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Indicates that the received username already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "The user already exists."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "An array containing information about the validations made.",
+                      "example": [
+                        {
+                          "code": "too_small",
+                          "minimum": 1,
+                          "type": "string",
+                          "inclusive": true,
+                          "exact": false,
+                          "message": "String must contain at least 1 character(s)",
+                          "path": [
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        },
+        "requestBody": {
+          "description": "The information to create the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 14,
+                    "pattern": "^[a-zA-Z0-9]+$",
+                    "example": "lisa"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "This property must contain at least one number, one lowercase letter and one uppercase letter.",
+                    "minLength": 7,
+                    "maxLength": 22,
+                    "pattern": "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]+$",
+                    "example": "Abcdefg1"
+                  }
+                },
+                "required": [
+                  "name",
+                  "password"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "summary": "Log in the user",
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "headers": {
+              "Set-Cookie": {
+                "description": "The cookie containing the access token",
+                "schema": {
+                  "type": "string",
+                  "example": "access_token=eyJhbGciOiJIUzI1NiIsInR5...; Max-Age=3600; Path=/; HttpOnly; SameSite=Strict; Secure"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "createdRecipes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "savedRecipes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Some of the authentication methods provided do not match those of the intended user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "An object containing information about the property/ies which caused the rejection.",
+                      "properties": {
+                        "password": {
+                          "type": "string",
+                          "example": "Invalid password."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Some of the indentification methods provided do not match any user in the databases.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string",
+                      "default": "NOT_FOUND"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "An object that contains information about the property/ies that indentifies the user and whose values never match any in the databases.",
+                      "example": {
+                        "name": "User not found."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "An array containing information about the validations made.",
+                      "example": [
+                        {
+                          "code": "too_small",
+                          "minimum": 1,
+                          "type": "string",
+                          "inclusive": true,
+                          "exact": false,
+                          "message": "String must contain at least 1 character(s)",
+                          "path": [
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        },
+        "requestBody": {
+          "description": "Login information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 14,
+                    "pattern": "^[a-zA-Z0-9]+$",
+                    "example": "lisa"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 7,
+                    "maxLength": 22,
+                    "example": "Abcdefg1"
+                  }
+                },
+                "required": [
+                  "name",
+                  "password"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/logout": {
+      "post": {
+        "summary": "Log out the user",
+        "responses": {
+          "200": {
+            "description": "Log out the user by clearing up their cookie containing the access token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes": {
+      "post": {
+        "summary": "Create a recipe",
+        "description": "Create a recipe with an optional image. User authentication is required.",
+        "responses": {
+          "201": {
+            "description": "Indicates that the recipe was created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The client did something wrong. The access token may not contain correct information about the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string",
+                      "example": "BAD_REQUEST"
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The access token was not found, it's invalid, or the payload did not pass validations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "An array containing information about the validations made."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        },
+        "requestBody": {
+          "description": "The information to create the recipe.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80,
+                    "example": "Cookies"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "minLength": 1,
+                    "example": "Cookies recipe description"
+                  },
+                  "image": {
+                    "type": "string",
+                    "nullable": true,
+                    "format": "binary"
+                  },
+                  "ingredients": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "format": "int32",
+                          "minimum": 1
+                        },
+                        "measurement_unit": {
+                          "type": "string",
+                          "enum": [
+                            "cups",
+                            "grams",
+                            "liters",
+                            "milliliters",
+                            "ounces",
+                            "pieces",
+                            "tablespoons",
+                            "teaspoons",
+                            "pounds",
+                            "kilograms"
+                          ]
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "name": "Quinoa",
+                        "quantity": 2,
+                        "measurement_unit": "cups"
+                      },
+                      {
+                        "name": "Salt",
+                        "quantity": 1,
+                        "measurement_unit": "teaspoons"
+                      }
+                    ]
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "example": [
+                      "step 1",
+                      "step 2"
+                    ]
+                  },
+                  "prep_time": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "1h"
+                  },
+                  "cook_time": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "20min"
+                  },
+                  "yield": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Number of servings.",
+                    "minimum": 1
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "public",
+                      "private"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "ingredients",
+                  "steps",
+                  "prep_time",
+                  "cook_time",
+                  "yield",
+                  "visibility"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/{id}": {
+      "get": {
+        "summary": "Get data from a single recipe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Recipe id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The recipe was sent in full.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "image_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "ingredients": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "measurement_unit": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "prep_time": {
+                          "type": "string"
+                        },
+                        "cook_time": {
+                          "type": "string"
+                        },
+                        "yield": {
+                          "type": "integer",
+                          "description": "Number of servings.",
+                          "example": 1
+                        },
+                        "visibility": {
+                          "type": "string",
+                          "enum": [
+                            "public",
+                            "private"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "lastEdit": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Only part of the recipe was sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "image_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "ingredients": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "integer",
+                                "example": 1
+                              },
+                              "measurement_unit": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "prep_time": {
+                          "type": "string"
+                        },
+                        "cook_time": {
+                          "type": "string"
+                        },
+                        "yield": {
+                          "type": "integer",
+                          "description": "Number of servings.",
+                          "example": 1
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "lastEdit": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The recipe was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "errorCode": {
+                      "type": "string",
+                      "default": "NOT_FOUND"
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        }
+      }
+    }
+  }
+}

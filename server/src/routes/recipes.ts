@@ -1,17 +1,19 @@
 import { Router } from 'express';
 import { RecipesController } from '../controller/recipes.js';
+import { authorizationMiddleware } from '../middlewares/authorization.js';
 import {
-	processRecipe,
-	processRecipeErrorHandling,
+	processRecipeMiddleware,
+	processRecipeErrorMiddleware,
 } from '../middlewares/processRecipe.js';
 
 export const recipesRouter = Router();
 
 recipesRouter.post(
 	'/',
-	processRecipe,
+	authorizationMiddleware,
+	processRecipeMiddleware,
 	RecipesController.create,
-	processRecipeErrorHandling,
+	processRecipeErrorMiddleware,
 );
 
 // recipesRouter.get('/', RecipesController.getAll);

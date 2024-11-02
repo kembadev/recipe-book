@@ -1,27 +1,30 @@
 import type { RequestHandler } from 'express';
 
+import path from 'node:path';
+
 import { ResponseSchema, ERROR_CODES } from '../helpers/ResponseSchema.js';
 import { RecipesModule } from '../model/recipes-local.js';
 import { validateRecipe } from '../schemas/recipes.js';
 
+import { getRemoveFile } from '../helpers/getRemoveFile.js';
+
 export class RecipesController {
 	static create: RequestHandler = async (req, res) => {
-		const user = req.session.user;
+		const destination = req.file?.destination;
+		const filename = req.file?.filename;
 
-		if (user === null) {
-			res.status(401).json(
-				ResponseSchema.failed({
-					message: 'Access was denied.',
-					errorCode: ERROR_CODES.OTHERS,
-				}),
-			);
+		let removeImageFile: () => unknown = () => {};
 
-			return;
+		if (typeof destination === 'string' && typeof filename === 'string') {
+			const imageFileUrl = path.join(destination, filename);
+			removeImageFile = getRemoveFile(imageFileUrl);
 		}
 
 		const { success: isValidRecipe, error, data } = validateRecipe(req.body);
 
 		if (!isValidRecipe) {
+			removeImageFile();
+
 			res.status(422).json(
 				ResponseSchema.failed({
 					message: 'Invalid request body format.',
@@ -33,9 +36,19 @@ export class RecipesController {
 			return;
 		}
 
-		const result = await RecipesModule.create({ data, userId: user.id });
+		const user = req.session.user!;
+
+		const result = await RecipesModule.create({
+			data: {
+				...data,
+				image_url: filename ?? null,
+			},
+			userId: user.id,
+		});
 
 		if (result instanceof Error) {
+			removeImageFile();
+
 			res.status(500).json(
 				ResponseSchema.failed({
 					message: 'Could not create the recipe.',
@@ -47,6 +60,8 @@ export class RecipesController {
 		}
 
 		if (!result.success) {
+			removeImageFile();
+
 			res.status(400).json(
 				ResponseSchema.failed({
 					message: result.errorMessage,
