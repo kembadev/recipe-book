@@ -22,10 +22,9 @@ const storage = multer.diskStorage({
 	filename: (_req, file, cb) => {
 		const extension = file.originalname.split('.').at(-1);
 
-		const ModifiedUTC = new Date().toISOString().replace(/:/g, '-'); // because Windows
 		const randomInt = Math.round(Math.random() * 1e6);
 
-		const filename = ModifiedUTC + '__' + randomInt + '.' + extension;
+		const filename = Date.now() + '_' + randomInt + '.' + extension;
 
 		cb(null, filename);
 	},
@@ -68,7 +67,7 @@ export const processRecipeErrorMiddleware: ErrorRequestHandler = (
 	res.status(400).json(
 		ResponseSchema.failed({
 			message: err.message,
-			errorCode: ERROR_CODES.OTHERS,
+			errorCode: ERROR_CODES.BAD_REQUEST,
 		}),
 	);
 };

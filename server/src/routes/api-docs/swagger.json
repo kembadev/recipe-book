@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Recipe management API",
+    "title": "Recipes management API",
     "version": "1.0.0",
     "description": "This API provides the necessary endpoints to manage the users and recipes within the app (recipe-book). It allows users to register, log in, create, update, delete and search for recipes. The API is designed to integrate with the app frontend."
   },
@@ -853,6 +853,10 @@
                             "private"
                           ]
                         },
+                        "creator": {
+                          "type": "string",
+                          "nullable": true
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time"
@@ -942,6 +946,10 @@
                           "type": "integer",
                           "description": "Number of servings.",
                           "example": 1
+                        },
+                        "creator": {
+                          "type": "string",
+                          "nullable": true
                         },
                         "createdAt": {
                           "type": "string",

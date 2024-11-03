@@ -9,7 +9,7 @@ export const authorizationMiddleware: RequestHandler = (req, res, next) => {
 	res.status(401).json(
 		ResponseSchema.failed({
 			message: 'Access was denied.',
-			errorCode: ERROR_CODES.OTHERS,
+			errorCode: ERROR_CODES.UNAUTHORIZED,
 		}),
 	);
 };

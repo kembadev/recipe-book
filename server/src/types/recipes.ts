@@ -7,11 +7,11 @@ export interface Recipe extends RecipeSquema {
 	lastEdit: string;
 }
 
-export type PrivateRecipe = Omit<Recipe, 'createdBy'>;
-
-export type PublicRecipe = Omit<PrivateRecipe, 'createdBy' | 'visibility'> & {
+export type PrivateRecipe = Omit<Recipe, 'createdBy'> & {
 	creator: string | null;
 };
+
+export type PublicRecipe = Omit<PrivateRecipe, 'visibility'>;
 
 // Module
 
@@ -26,7 +26,7 @@ export type CreateRecipe = (info: {
 
 export type GetById = (info: {
 	recipeId: string;
-	userId: string | undefined;
+	userId?: string;
 }) => Promise<
 	| Error
 	| undefined

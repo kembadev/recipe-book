@@ -91,12 +91,16 @@ export class UsersController {
 
 		if (!result.success) {
 			const { paramsError } = result;
+
 			const statusCode = paramsError.password ? 401 : 404;
+			const errorCode = paramsError.password
+				? ERROR_CODES.UNAUTHORIZED
+				: ERROR_CODES.NOT_FOUND;
 
 			res.status(statusCode).json(
 				ResponseSchema.failed({
 					message: 'Could not complete the login.',
-					errorCode: ERROR_CODES.OTHERS,
+					errorCode,
 					details: paramsError,
 				}),
 			);

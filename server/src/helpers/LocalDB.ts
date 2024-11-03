@@ -1,8 +1,6 @@
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -19,7 +17,6 @@ type DB<T> = Record<string, T>;
 
 interface LocalDBConfig<T> {
 	pathUrl: string;
-	relativePath: string;
 	initialData?: DB<T>;
 }
 
@@ -155,24 +152,15 @@ export class LocalDB<Q> {
 
 	/**
 	 * @param {LocalDBConfig} localDBConfig
-	 * @param {string} localDBConfig.pathUrl - import.meta.url
+	 * @param {string} localDBConfig.pathUrl - Absolute path to the db file
 	 */
-	static async createDB<T>({
-		pathUrl,
-		relativePath,
-		initialData = {},
-	}: LocalDBConfig<T>) {
-		const __filename = fileURLToPath(pathUrl);
-		const __dirname = path.dirname(__filename);
-		const dbPath = path.join(
-			__dirname,
-			relativePath.endsWith('.json') ? relativePath : `${relativePath}.json`,
-		);
+	static async createDB<T>({ pathUrl, initialData = {} }: LocalDBConfig<T>) {
+		const dbLocation = pathUrl.endsWith('.json') ? pathUrl : `${pathUrl}.json`;
 
-		const adapter = new JSONFile<DB<T>>(dbPath);
+		const adapter = new JSONFile<DB<T>>(dbLocation);
 		const db = new Low(adapter, initialData);
 		await db.write();
 
-		return new LocalDB<T>(dbPath, db);
+		return new LocalDB<T>(dbLocation, db);
 	}
 }

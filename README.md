@@ -21,7 +21,7 @@
 <ul style="display: flex; flex-direction: column; gap: 5px">
   <li>Typescript.</li>
 	<li>Backend: Node with Express.</li>
-	<li>Frontend: React, React Router.</li>
+	<li>Frontend: React.</li>
 </ul>
 
 ## Installation
@@ -40,7 +40,11 @@ To install and run locally:
   ```bash
   npm install
   ```
-4. Navigate to the server directory, create a .env file and write the following:
+4. Navigate to the server directory:
+  ```bash
+  cd server
+  ```
+5. Once in the server directory, create a .env file and write the following:
   ```dotenv
   NODE_ENV=development
   # The desired port
@@ -48,9 +52,10 @@ To install and run locally:
   # The secret key to encrypt the session tokens
   SECRET_JWT_KEY=write-here-your-ultra-secret-key-too-big
   ```
-5. Once in the server directory, build and start the server:
+6. Build and start the server:
   ```bash
-  npm run build && npm run start
+  npm run build
+  npm run start
   ```
 
 View the website at: http://localhost:PORT
@@ -64,7 +69,7 @@ View the website at: http://localhost:PORT
   > [!WARNING]
   > Not recommended.
 
-  For the local database, the project uses the lowdb library, which stores data in a JSON file. There is a class called LowDB in server/src/helpers from which you can instantiate an object that facilitates queries to the database that includes methods such as addOne, findOne, removeOne, etc., to manage the data.
+  For the local database, the project uses the lowdb library, which stores data in a JSON file. There is a class called LocalDB in server/src/helpers from which you can instantiate an object that facilitates queries to the database that includes methods such as addOne, findOne, removeOne, etc., to manage the data.
 
 ### Non-local database
 

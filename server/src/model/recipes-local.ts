@@ -49,38 +49,36 @@ export class RecipesModule {
 
 		if (recipe === undefined) return;
 
-		const recipeData = recipe[1];
+		const {
+			createdBy: recipeCreatorId,
+			visibility,
+			...recipeRestData
+		} = recipe[1];
 
-		if (
-			userId !== recipeData.createdBy &&
-			recipeData.visibility === 'private'
-		) {
+		if (userId !== recipeCreatorId && visibility === 'private') {
 			return;
 		}
 
-		const recipeOwner = await UsersDB.findOne(recipeData.createdBy);
+		const recipeOwner = await UsersDB.findOne(recipeCreatorId);
 
 		if (recipeOwner instanceof Error) return recipeOwner;
 
-		if (userId === recipeData.createdBy) {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { createdBy, ...rest } = recipeData;
+		const creator = recipeOwner?.[1].name ?? null;
 
+		if (userId === recipeCreatorId) {
 			return {
 				isPartialBody: false,
-				value: rest,
+				value: {
+					...recipeRestData,
+					visibility,
+					creator,
+				},
 			};
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { createdBy, visibility, ...rest } = recipeData;
-
 		return {
 			isPartialBody: true,
-			value: {
-				...rest,
-				creator: recipeOwner?.[1].name ?? null,
-			},
+			value: { ...recipeRestData, creator },
 		};
 	};
 }

@@ -1,10 +1,15 @@
 import type { User } from '../../types/users.js';
-import { LocalDB } from '../../helpers/LowDB.js';
+import { LocalDB } from '../../helpers/LocalDB.js';
 import usersData from './users-db.json' with { type: 'json' };
 
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const UsersDB = await LocalDB.createDB<User>({
-	pathUrl: import.meta.url,
-	relativePath: 'users-db',
+	pathUrl: path.join(__dirname, './users-db'),
 	initialData: usersData,
 });
 
