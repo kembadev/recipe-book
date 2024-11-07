@@ -1,22 +1,28 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+
 import { FormBase } from './FormBase.tsx';
-import { FormEvent } from 'react';
 
-describe('FormBase', () => {
-	const onSubmit = vi.fn((e: FormEvent) => {
-		e.preventDefault();
-	});
+const onSubmit = vi.fn();
+const formLabel = 'login';
 
-	const formLabel = 'login';
-
-	beforeEach(() => {
-		render(
+const router = createMemoryRouter([
+	{
+		path: '/',
+		element: (
 			<FormBase formLabel={formLabel} onSubmit={onSubmit}>
 				<label htmlFor="username">username</label>
 				<input name="username" id="username" type="text" />
-			</FormBase>,
-		);
+			</FormBase>
+		),
+	},
+]);
+
+describe('FormBase component', () => {
+	beforeEach(() => {
+		render(<RouterProvider router={router} />);
 	});
 
 	afterEach(() => {
@@ -24,7 +30,7 @@ describe('FormBase', () => {
 	});
 
 	it('should render', () => {
-		expect(screen.getByText(formLabel)).toBeDefined();
+		screen.getByText(formLabel);
 	});
 
 	it('should submit the form', async () => {
@@ -33,8 +39,6 @@ describe('FormBase', () => {
 
 		fireEvent.submit(usernameInput.closest('form')!);
 
-		await waitFor(() => {
-			expect(onSubmit).toHaveBeenCalledOnce();
-		});
+		expect(onSubmit).toHaveBeenCalledOnce();
 	});
 });

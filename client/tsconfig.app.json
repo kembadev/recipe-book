@@ -25,6 +25,9 @@
       ],
       "@utils/*": [
         "src/utils/*"
+      ],
+      "@services/*": [
+        "src/services/*"
       ]
     },
     /* Bundler mode */

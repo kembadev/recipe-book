@@ -1,27 +1,34 @@
 import './FormBase.css';
 
 import { FormEvent, ReactNode } from 'react';
+import type { HTMLFormMethod } from '../../types/app.ts';
+
+import { Form } from 'react-router-dom';
 
 interface FormBaseProps {
+	children: ReactNode;
 	formLabel: string;
 	submitLabel?: string;
-	children: ReactNode;
-	onSubmit: (e: FormEvent) => void;
+	action?: string;
+	method?: HTMLFormMethod;
+	onSubmit?: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 export function FormBase({
-	formLabel,
-	submitLabel,
 	children,
+	formLabel,
+	submitLabel = 'Submit',
+	action,
+	method,
 	onSubmit,
 }: FormBaseProps) {
 	return (
-		<form onSubmit={onSubmit}>
+		<Form method={method} action={action} onSubmit={onSubmit}>
 			<fieldset>
 				<legend>{formLabel}</legend>
 				{children}
-				<button type="submit">{submitLabel ?? 'Submit'}</button>
+				<button type="submit">{submitLabel}</button>
 			</fieldset>
-		</form>
+		</Form>
 	);
 }

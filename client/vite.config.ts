@@ -23,6 +23,7 @@ export default defineConfig({
 			'@hooks': resolveAlias('./src/hooks'),
 			'@helpers': resolveAlias('./src/helpers'),
 			'@utils': resolveAlias('./src/utils'),
+			'@services': resolveAlias('./src/services'),
 		},
 	},
 	test: {

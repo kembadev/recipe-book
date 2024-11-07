@@ -1,0 +1,29 @@
+section.input-wrapper,
+section.input-wrapper>div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+section.input-wrapper>label {
+  font-size: 0.95em;
+}
+
+section.input-wrapper>div em {
+  color: var(--dark-secondary-text-color);
+  font-size: 0.6em;
+}
+
+section.input-wrapper input {
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--dark-border-color);
+  outline: none;
+  padding: 3px;
+  font-size: 0.7em;
+
+  &:focus {
+    border-bottom: 2px solid var(--blue);
+  }
+}

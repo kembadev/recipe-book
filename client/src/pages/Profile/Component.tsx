@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function Profile() {
+export function Component() {
 	return (
 		<header>
 			<h1>Profile</h1>
