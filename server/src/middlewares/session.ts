@@ -8,7 +8,7 @@ const options: jwt.VerifyOptions = {
 };
 
 export const sessionMiddleware: RequestHandler = (req, _res, next) => {
-	req.session = { user: null };
+	req.session = null;
 
 	if (typeof SECRET_JWT_KEY !== 'string') {
 		console.error('SECRET_JWT_KEY may not be defined. Set it in the .env file');
@@ -20,14 +20,19 @@ export const sessionMiddleware: RequestHandler = (req, _res, next) => {
 	if (typeof token !== 'string') return next();
 
 	jwt.verify(token, SECRET_JWT_KEY, options, (err, payload) => {
-		if (err) return next();
-
-		const { success, data } = validateAccessToken(payload);
-
-		if (success) {
-			req.session = { user: data };
+		if (err) {
+			req.session = err;
+			return next();
 		}
 
+		const { success, data, error } = validateAccessToken(payload);
+
+		if (success) {
+			req.session = data;
+			return next();
+		}
+
+		req.session = error;
 		next();
 	});
 };

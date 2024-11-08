@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import type { TokenPayloadUser } from '../types/users.js';
 
 import path from 'node:path';
 
@@ -36,7 +37,7 @@ export class RecipesController {
 			return;
 		}
 
-		const user = req.session.user!;
+		const user = req.session as TokenPayloadUser;
 
 		const result = await RecipesModule.create({
 			data: {
@@ -80,10 +81,13 @@ export class RecipesController {
 	};
 
 	static getById: RequestHandler = async (req, res) => {
-		const user = req.session.user;
+		const user = req.session;
+		const isUser = !(user instanceof Error) && user !== null;
+		const userId = isUser ? user.id : undefined;
+
 		const recipeId = req.params.id;
 
-		const result = await RecipesModule.getById({ recipeId, userId: user?.id });
+		const result = await RecipesModule.getById({ recipeId, userId });
 
 		if (result instanceof Error) {
 			res.status(500).json(

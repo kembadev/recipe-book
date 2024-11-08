@@ -14,9 +14,17 @@ const router = createBrowserRouter([
 		lazy: () => import('./SignIn'),
 	},
 	{
-		path: '/:username',
+		path: '/profile/:username',
 		lazy: () => import('./Profile'),
 	},
+	// {
+	// 	path: '/recipes',
+	// 	lazy: () => import('./Recipes'),
+	// },
+	// {
+	// 	path: '/recipes/:id',
+	// 	lazy: () => import('./Recipe'),
+	// },
 	{
 		path: '*',
 		lazy: () => import('./NotFound'),

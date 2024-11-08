@@ -6,6 +6,9 @@
 
   This is a recipe web application, where users can upload, edit and save recipes. In addition, it offers additional functions such as converting between units and adjusting ingredient quantities.
 
+  > [!NOTE]
+  > Node ^20.12 required.
+
 ## Features
 
 <ul style="display: flex; flex-direction: column; gap: 5px">
@@ -73,4 +76,4 @@ View the website at: http://localhost:PORT
 
 ### Non-local database
 
-  To use a non-local database such as MongoDB or MySQL, create a model similar to the local database model to avoid changing the controller and other parts of the application. For better integration, types are provided in server/src/types (see recipes.ts and users.ts).
+  To use a non-local database such as MongoDB or MySQL, create a model similar to the local database model to avoid changing the controller and other parts of the application. For better integration, types are provided in server/src/types (see recipes.ts, users.ts, and auth.ts).

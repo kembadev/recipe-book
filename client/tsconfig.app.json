@@ -28,6 +28,9 @@
       ],
       "@services/*": [
         "src/services/*"
+      ],
+      "@context/*": [
+        "src/context/*"
       ]
     },
     /* Bundler mode */

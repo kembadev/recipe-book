@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 export function Component() {
+	const { username } = useParams();
+
 	return (
 		<header>
-			<h1>Profile</h1>
+			<h1>{username ?? 'Profile'}</h1>
 			<Link to="/">Go to Home</Link>
 		</header>
 	);

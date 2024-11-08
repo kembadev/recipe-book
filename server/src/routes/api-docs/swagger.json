@@ -41,6 +41,150 @@
             }
           }
         }
+      },
+      "401GenericUnauthorized": {
+        "description": "The access token was not found, it's invalid, or the payload did not pass validations.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "enum": [
+                    null
+                  ]
+                },
+                "errorCode": {
+                  "type": "string",
+                  "example": "UNAUTHORIZED"
+                },
+                "details": {
+                  "enum": [
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "400BadAccessToken": {
+        "description": "The access token is valid, although the payload may not contain correct information about the user.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User not found."
+                },
+                "data": {
+                  "enum": [
+                    null
+                  ]
+                },
+                "errorCode": {
+                  "type": "string",
+                  "example": "BAD_REQUEST"
+                },
+                "details": {
+                  "enum": [
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "RecipeIngredients": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 1
+            },
+            "measurement_unit": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PrivateUserData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdRecipes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "savedRecipes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ResponseBody__PrivateUserData": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PrivateUserData"
+          },
+          "errorCode": {
+            "enum": [
+              null
+            ]
+          },
+          "details": {
+            "enum": [
+              null
+            ]
+          }
+        }
       }
     }
   },
@@ -238,54 +382,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "createdRecipes": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "format": "uuid"
-                          }
-                        },
-                        "savedRecipes": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "format": "uuid"
-                          }
-                        }
-                      }
-                    },
-                    "errorCode": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "details": {
-                      "enum": [
-                        null
-                      ]
-                    }
-                  }
+                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
                 }
               }
             }
@@ -540,73 +637,10 @@
             }
           },
           "400": {
-            "description": "The client did something wrong. The access token may not contain correct information about the user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string",
-                      "example": "BAD_REQUEST"
-                    },
-                    "details": {
-                      "enum": [
-                        null
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/400BadAccessToken"
           },
           "401": {
-            "description": "The access token was not found, it's invalid, or the payload did not pass validations.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string"
-                    },
-                    "details": {
-                      "enum": [
-                        null
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/401GenericUnauthorized"
           },
           "422": {
             "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
@@ -670,49 +704,7 @@
                     "format": "binary"
                   },
                   "ingredients": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 40
-                        },
-                        "quantity": {
-                          "type": "integer",
-                          "format": "int32",
-                          "minimum": 1
-                        },
-                        "measurement_unit": {
-                          "type": "string",
-                          "enum": [
-                            "cups",
-                            "grams",
-                            "liters",
-                            "milliliters",
-                            "ounces",
-                            "pieces",
-                            "tablespoons",
-                            "teaspoons",
-                            "pounds",
-                            "kilograms"
-                          ]
-                        }
-                      }
-                    },
-                    "example": [
-                      {
-                        "name": "Quinoa",
-                        "quantity": 2,
-                        "measurement_unit": "cups"
-                      },
-                      {
-                        "name": "Salt",
-                        "quantity": 1,
-                        "measurement_unit": "teaspoons"
-                      }
-                    ]
+                    "$ref": "#/components/schemas/RecipeIngredients"
                   },
                   "steps": {
                     "type": "array",
@@ -812,22 +804,7 @@
                           "nullable": true
                         },
                         "ingredients": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              },
-                              "quantity": {
-                                "type": "integer",
-                                "example": 1
-                              },
-                              "measurement_unit": {
-                                "type": "string"
-                              }
-                            }
-                          }
+                          "$ref": "#/components/schemas/RecipeIngredients"
                         },
                         "steps": {
                           "type": "array",
@@ -913,22 +890,7 @@
                           "nullable": true
                         },
                         "ingredients": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              },
-                              "quantity": {
-                                "type": "integer",
-                                "example": 1
-                              },
-                              "measurement_unit": {
-                                "type": "string"
-                              }
-                            }
-                          }
+                          "$ref": "#/components/schemas/RecipeIngredients"
                         },
                         "steps": {
                           "type": "array",
@@ -1010,6 +972,32 @@
                 }
               }
             }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        }
+      }
+    },
+    "/api/auth/status": {
+      "get": {
+        "summary": "Check if the user is logged in and get user information.",
+        "responses": {
+          "200": {
+            "description": "The user is logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadAccessToken"
+          },
+          "401": {
+            "$ref": "#/components/responses/401GenericUnauthorized"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"
