@@ -25,6 +25,7 @@ export default defineConfig({
 			'@utils': resolveAlias('./src/utils'),
 			'@services': resolveAlias('./src/services'),
 			'@context': resolveAlias('./src/context'),
+			'@src/types': resolveAlias('./src/types'),
 		},
 	},
 	test: {

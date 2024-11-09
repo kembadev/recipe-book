@@ -1,0 +1,15 @@
+.app {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+.app.dark {
+  background-color: var(--dark-main-bg-color);
+  color: var(--dark-main-text-color);
+}
+
+.app.light {
+  background-color: var(--light-main-bg-color);
+  color: var(--light-main-text-color);
+}

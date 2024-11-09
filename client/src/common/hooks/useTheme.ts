@@ -13,12 +13,12 @@ export function useTheme() {
 	const toggleTheme = useCallback(() => {
 		if (theme === 'dark') {
 			setTheme('light');
-			localStorage.setItem('theme', 'light');
+			localStorage.setItem('theme', '"light"');
 			return;
 		}
 
 		setTheme('dark');
-		localStorage.setItem('theme', 'dark');
+		localStorage.setItem('theme', '"dark"');
 	}, [theme, setTheme]);
 
 	return { theme, toggleTheme };

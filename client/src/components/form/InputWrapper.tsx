@@ -2,6 +2,8 @@ import './InputWrapper.css';
 
 import type { InputHTMLAttributes, ReactNode } from 'react';
 
+import { useTheme } from '@common/hooks/useTheme.ts';
+
 interface InputBaseProps {
 	label: string;
 	validationMessage: string | null;
@@ -30,8 +32,10 @@ export function InputWrapper({
 	errorMessageId,
 	validationMessage,
 }: InputWrapperProps) {
+	const { theme } = useTheme();
+
 	return (
-		<section className="input-wrapper">
+		<section className={`input-wrapper ${theme}`}>
 			<label htmlFor={inputId}>{label}</label>
 			<div>
 				{children}

@@ -69,6 +69,7 @@ export function SignUpForm() {
 					placeholder="Username"
 					maxLength={14}
 					autoComplete="off"
+					spellCheck={false}
 				/>
 				<PasswordInput
 					label="Password"
@@ -79,6 +80,7 @@ export function SignUpForm() {
 					placeholder="Password"
 					maxLength={22}
 					autoComplete="off"
+					spellCheck={false}
 				/>
 			</FormBase>
 		</div>

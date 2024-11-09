@@ -10,7 +10,6 @@ section.input-wrapper>label {
 }
 
 section.input-wrapper>div em {
-  color: var(--dark-secondary-text-color);
   font-size: 0.6em;
 }
 
@@ -18,12 +17,31 @@ section.input-wrapper input {
   color: inherit;
   background-color: transparent;
   border: none;
-  border-bottom: 2px solid var(--dark-border-color);
   outline: none;
   padding: 3px;
   font-size: 0.7em;
 
   &:focus {
-    border-bottom: 2px solid var(--blue);
+    border-bottom: 2px solid var(--blue) !important;
+  }
+}
+
+section.input-wrapper.dark {
+  &>div em {
+    color: var(--dark-secondary-text-color)
+  }
+
+  input {
+    border-bottom: 2px solid var(--dark-border-color);
+  }
+}
+
+section.input-wrapper.light {
+  &>div em {
+    color: var(--light-secondary-text-color)
+  }
+
+  input {
+    border-bottom: 2px solid var(--light-border-color);
   }
 }

@@ -1,7 +1,9 @@
 import './FormBase.css';
 
-import { FormEvent, ReactNode } from 'react';
-import type { HTMLFormMethod } from '../../types/app.ts';
+import type { HTMLFormMethod } from '@src/types/app.ts';
+import type { FormEvent, ReactNode } from 'react';
+
+import { useTheme } from '@common/hooks/useTheme.ts';
 
 import { Form } from 'react-router-dom';
 
@@ -22,9 +24,16 @@ export function FormBase({
 	method,
 	onSubmit,
 }: FormBaseProps) {
+	const { theme } = useTheme();
+
 	return (
-		<Form method={method} action={action} onSubmit={onSubmit}>
-			<fieldset>
+		<Form
+			className="form-base"
+			method={method}
+			action={action}
+			onSubmit={onSubmit}
+		>
+			<fieldset className={theme}>
 				<legend>{formLabel}</legend>
 				{children}
 				<button type="submit">{submitLabel}</button>
