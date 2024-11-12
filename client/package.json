@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "postinstall": "cd node_modules/@monorepo/shared && npm run build",
+    "postinstall": "cd node_modules/@monorepo/shared && pnpm build",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

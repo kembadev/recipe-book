@@ -4,8 +4,8 @@
   "main": "server/dist/app.js",
   "type": "module",
   "scripts": {
-    "build": "npm run build --prefix server",
-    "start": "npm run start --prefix server",
+    "build": "pnpm -F server build",
+    "start": "pnpm -F server start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {

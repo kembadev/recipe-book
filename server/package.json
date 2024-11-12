@@ -4,11 +4,11 @@
   "main": "dist/app.js",
   "type": "module",
   "scripts": {
-    "postinstall": "cd node_modules/@monorepo/shared && npm run build",
+    "postinstall": "cd node_modules/@monorepo/shared && pnpm build",
     "copyview": "copyfiles -u 3 ../client/dist/**/*",
-    "build:client": "cd ../client && npm run build && cd ../server",
+    "build:client": "pnpm -F client build",
     "dev": "tsx watch --clear-screen=false --exclude \"src/db/uploads/*\" --exclude \"src/db/local/**/*.json\" src/app.ts",
-    "build": "npm run build:client && rimraf dist && tsc && npm run copyview -- dist/view",
+    "build": "pnpm build:client && rimraf dist && tsc && pnpm copyview -- dist/view",
     "start": "node dist/app.js",
     "start:prod": "cross-env NODE_ENV=production node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
