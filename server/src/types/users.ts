@@ -1,24 +1,8 @@
-import type { UserRegisterSchema } from '../schemas/users.js';
-
-export interface User extends UserRegisterSchema {
-	createdAt: string;
-	savedRecipes: string[];
-	createdRecipes: string[];
-}
-
-export type PrivateUser = Pick<
-	User,
-	'name' | 'createdAt' | 'createdRecipes' | 'savedRecipes'
->;
+import type { User, PrivateUser } from '@monorepo/shared';
 
 export interface TokenPayloadUser {
 	id: string;
 }
-
-export type PublicUser = Pick<
-	PrivateUser,
-	'name' | 'createdAt' | 'createdRecipes'
->;
 
 // Module
 
@@ -42,3 +26,7 @@ export type LoginUser = (userInfo: ProvidedUserInfoLogin) => Promise<
 			paramsError: Partial<Record<keyof ProvidedUserInfoLogin, string>>;
 	  }
 >;
+
+export type GetInfo = (
+	userId: string,
+) => Promise<Error | PrivateUser | undefined>;

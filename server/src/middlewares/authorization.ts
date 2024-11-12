@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { ERROR_CODES, ResponseSchema } from '../helpers/ResponseSchema.js';
+import { ERROR_CODES, ResponseSchema } from '@monorepo/shared';
 
 export const authorizationMiddleware: RequestHandler = (req, res, next) => {
 	const user = req.session;

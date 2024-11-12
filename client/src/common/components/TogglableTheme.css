@@ -1,0 +1,27 @@
+.toggle-theme-btn {
+  display: inline-grid;
+  place-content: center;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  padding: 3px;
+  cursor: pointer;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.toggle-theme-btn:hover {
+  background-color: color-mix(in srgb, #c9c9c9 25%, transparent);
+}
+
+.toggle-theme-btn.dark {
+  color: var(--light-main-bg-color);
+}
+
+.toggle-theme-btn.light {
+  color: var(--dark-main-bg-color);
+}

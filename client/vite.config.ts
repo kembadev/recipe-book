@@ -26,6 +26,8 @@ export default defineConfig({
 			'@services': resolveAlias('./src/services'),
 			'@context': resolveAlias('./src/context'),
 			'@src/types': resolveAlias('./src/types'),
+			'@pages': resolveAlias('./src/pages'),
+			'@config': resolveAlias('./src/config.ts'),
 		},
 	},
 	test: {

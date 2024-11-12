@@ -1,4 +1,6 @@
 .user-registration {
   font-size: 1.35rem;
   width: 280px;
+  align-self: center;
+  justify-self: center;
 }

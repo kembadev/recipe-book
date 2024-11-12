@@ -1,9 +1,10 @@
 import type { ErrorRequestHandler } from 'express';
+
 import fs from 'node:fs';
+import path from 'node:path';
 
 import multer from 'multer';
-import path from 'node:path';
-import { ERROR_CODES, ResponseSchema } from '../helpers/ResponseSchema.js';
+import { ERROR_CODES, ResponseSchema } from '@monorepo/shared';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);

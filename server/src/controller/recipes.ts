@@ -3,7 +3,7 @@ import type { TokenPayloadUser } from '../types/users.js';
 
 import path from 'node:path';
 
-import { ResponseSchema, ERROR_CODES } from '../helpers/ResponseSchema.js';
+import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 import { RecipesModule } from '../model/recipes-local.js';
 import { validateRecipe } from '../schemas/recipes.js';
 

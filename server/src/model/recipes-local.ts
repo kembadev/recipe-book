@@ -1,4 +1,5 @@
-import type { Recipe, CreateRecipe, GetById } from '../types/recipes.js';
+import type { CreateRecipe, GetById } from '../types/recipes.js';
+import type { Recipe } from '@monorepo/shared';
 
 import RecipesDB from '../db/local/recipes.mjs';
 import UsersDB from '../db/local/users.mjs';

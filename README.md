@@ -6,9 +6,6 @@
 
   This is a recipe web application, where users can upload, edit and save recipes. In addition, it offers additional functions such as converting between units and adjusting ingredient quantities.
 
-  > [!NOTE]
-  > Node ^20.12 required.
-
 ## Features
 
 <ul style="display: flex; flex-direction: column; gap: 5px">
@@ -69,11 +66,11 @@ View the website at: http://localhost:PORT
 
 ### Local database
 
-  > [!WARNING]
+  > [!NOTE]
   > Not recommended.
 
   For the local database, the project uses the lowdb library, which stores data in a JSON file. There is a class called LocalDB in server/src/helpers from which you can instantiate an object that facilitates queries to the database that includes methods such as addOne, findOne, removeOne, etc., to manage the data.
 
 ### Non-local database
 
-  To use a non-local database such as MongoDB or MySQL, create a model similar to the local database model to avoid changing the controller and other parts of the application. For better integration, types are provided in server/src/types (see recipes.ts, users.ts, and auth.ts).
+  To use a non-local database such as MongoDB or MySQL, create a model similar to the local database model to avoid changing the controller and other parts of the application. For better integration, types are provided in server/src/types.

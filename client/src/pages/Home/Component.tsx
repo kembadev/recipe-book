@@ -1,3 +1,5 @@
+Component.displayName = 'Home';
+
 export function Component() {
 	return (
 		<header>

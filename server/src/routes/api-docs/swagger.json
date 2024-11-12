@@ -587,6 +587,32 @@
         }
       }
     },
+    "/api/users/auth": {
+      "get": {
+        "summary": "Check if the user is logged in and get user information.",
+        "responses": {
+          "200": {
+            "description": "The user is logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadAccessToken"
+          },
+          "401": {
+            "$ref": "#/components/responses/401GenericUnauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        }
+      }
+    },
     "/api/recipes": {
       "post": {
         "summary": "Create a recipe",
@@ -972,32 +998,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "$ref": "#/components/responses/500InternalError"
-          }
-        }
-      }
-    },
-    "/api/auth/status": {
-      "get": {
-        "summary": "Check if the user is logged in and get user information.",
-        "responses": {
-          "200": {
-            "description": "The user is logged in.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400BadAccessToken"
-          },
-          "401": {
-            "$ref": "#/components/responses/401GenericUnauthorized"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"

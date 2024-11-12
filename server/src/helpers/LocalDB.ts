@@ -4,7 +4,7 @@ import { JSONFile } from 'lowdb/node';
 import { existsSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
-import { Result } from '../utils/Result.js';
+import { Result } from '@monorepo/shared';
 
 class LocalDBError extends Error {
 	constructor(message: string) {

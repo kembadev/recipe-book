@@ -1,22 +1,14 @@
-import type { RecipeSquema } from '../schemas/recipes.js';
-
-export interface Recipe extends RecipeSquema {
-	image_url: string | null;
-	createdBy: string;
-	createdAt: string;
-	lastEdit: string;
-}
-
-export type PrivateRecipe = Omit<Recipe, 'createdBy'> & {
-	creator: string | null;
-};
-
-export type PublicRecipe = Omit<PrivateRecipe, 'visibility'>;
+import type {
+	RecipeSchema,
+	Recipe,
+	PrivateRecipe,
+	PublicRecipe,
+} from '@monorepo/shared';
 
 // Module
 
 export type CreateRecipe = (info: {
-	data: RecipeSquema & { image_url: string | null };
+	data: RecipeSchema & { image_url: string | null };
 	userId: string;
 }) => Promise<
 	| Error

@@ -1,4 +1,4 @@
-import type { User } from '../../types/users.js';
+import type { User } from '@monorepo/shared';
 import { LocalDB } from '../../helpers/LocalDB.js';
 import usersData from './users-db.json' with { type: 'json' };
 

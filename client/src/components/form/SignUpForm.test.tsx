@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { renderWithThemeProvider } from '../../test-utils.tsx';
 
 import { SignUpForm } from './SignUpForm.tsx';
 
@@ -16,7 +17,7 @@ const router = createMemoryRouter(
 
 describe('SignUpForm component', () => {
 	beforeEach(() => {
-		render(<RouterProvider router={router} />);
+		renderWithThemeProvider(<RouterProvider router={router} />);
 	});
 
 	it('should render', () => {

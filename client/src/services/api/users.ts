@@ -20,17 +20,21 @@ export class UsersAPI {
 		});
 	}
 
-	static async signUp({ name, password }: UserInfo) {
-		return await this.#postAsJSON({
+	static signUp({ name, password }: UserInfo) {
+		return this.#postAsJSON({
 			path: '/api/users/register',
 			data: { name, password },
 		});
 	}
 
-	static async signIn({ name, password }: UserInfo) {
-		return await this.#postAsJSON({
+	static signIn({ name, password }: UserInfo) {
+		return this.#postAsJSON({
 			path: '/api/users/login',
 			data: { name, password },
 		});
+	}
+
+	static getAuthInfo() {
+		return fetch('/api/users/auth');
 	}
 }

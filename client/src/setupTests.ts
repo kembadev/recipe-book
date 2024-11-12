@@ -4,6 +4,12 @@ import { cleanup } from '@testing-library/react';
 
 expect.extend(matchers);
 
+Object.defineProperty(window, 'matchMedia', {
+	value: vi.fn().mockImplementation(() => ({
+		matches: true,
+	})),
+});
+
 afterEach(() => {
 	cleanup();
 });

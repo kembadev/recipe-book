@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+Component.displayName = 'DefaultNotFound';
+
 export function Component() {
 	return (
 		<div style={{}}>

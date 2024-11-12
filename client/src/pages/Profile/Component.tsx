@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 
+Component.displayName = 'Profile';
+
 export function Component() {
 	const { username } = useParams();
 

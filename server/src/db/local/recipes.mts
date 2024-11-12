@@ -1,4 +1,4 @@
-import type { Recipe } from '../../types/recipes.js';
+import type { Recipe } from '@monorepo/shared';
 import { LocalDB } from '../../helpers/LocalDB.js';
 import recipesData from './recipes-db.json' with { type: 'json' };
 

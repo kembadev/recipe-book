@@ -1,4 +1,5 @@
-import type { User, CreateUser, LoginUser } from '../types/users.js';
+import type { CreateUser, LoginUser, GetInfo } from '../types/users.js';
+import type { User } from '@monorepo/shared';
 import { SALT_ROUNDS } from '../config.js';
 
 import UsersDB from '../db/local/users.mjs';
@@ -89,5 +90,15 @@ export class UsersModule {
 				},
 			},
 		};
+	};
+
+	static getInfo: GetInfo = async userId => {
+		const result = await UsersDB.findOne(userId);
+
+		if (!Array.isArray(result)) return result;
+
+		const { name, createdAt, createdRecipes, savedRecipes } = result[1];
+
+		return { name, createdAt, createdRecipes, savedRecipes };
 	};
 }

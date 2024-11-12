@@ -1,13 +1,13 @@
 import type { RequestHandler } from 'express';
+import type { TokenPayloadUser } from 'types/users.js';
 
 import { IS_DEVELOPMENT, SECRET_JWT_KEY } from '../config.js';
 
-import { ResponseSchema, ERROR_CODES } from '../helpers/ResponseSchema.js';
-import { validateUserRegister, validateUserLogin } from '../schemas/users.js';
-
+import jwt from 'jsonwebtoken';
 import { UsersModule } from '../model/users-local.js';
 
-import jwt from 'jsonwebtoken';
+import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
+import { validateUserRegister, validateUserLogin } from '../schemas/users.js';
 
 export class UsersController {
 	static create: RequestHandler = async (req, res) => {
@@ -153,5 +153,34 @@ export class UsersController {
 				data: null,
 			}),
 		);
+	};
+
+	static getInfo: RequestHandler = async (req, res) => {
+		const user = req.session as TokenPayloadUser;
+		const userInfo = await UsersModule.getInfo(user.id);
+
+		if (!userInfo) {
+			res.status(400).json(
+				ResponseSchema.failed({
+					message: 'User not found.',
+					errorCode: ERROR_CODES.BAD_REQUEST,
+				}),
+			);
+
+			return;
+		}
+
+		if (userInfo instanceof Error) {
+			res.status(500).json(
+				ResponseSchema.failed({
+					message: 'Something went wrong.',
+					errorCode: ERROR_CODES.INTERNAL_ERROR,
+				}),
+			);
+
+			return;
+		}
+
+		res.json(ResponseSchema.success({ data: userInfo }));
 	};
 }

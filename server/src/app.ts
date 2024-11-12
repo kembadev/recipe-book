@@ -3,7 +3,7 @@ import { PORT } from './config.js';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-import { ResponseSchema, ERROR_CODES } from './helpers/ResponseSchema.js';
+import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 import { apiRouter } from './routes/index.js';
 
 import express from 'express';

@@ -52,7 +52,7 @@ export function SignUpForm() {
 	);
 
 	return (
-		<div className="user-registration">
+		<section className="user-registration">
 			<FormBase
 				formLabel="Create account"
 				submitLabel="Create"
@@ -83,6 +83,6 @@ export function SignUpForm() {
 					spellCheck={false}
 				/>
 			</FormBase>
-		</div>
+		</section>
 	);
 }

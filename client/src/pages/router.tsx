@@ -1,20 +1,21 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, type RouteObject } from 'react-router-dom';
+import { Component, loader } from './Root';
 
-const router = createBrowserRouter([
+const routes: RouteObject[] = [
 	{
-		path: '/',
+		index: true,
 		lazy: () => import('./Home'),
 	},
 	{
-		path: '/signup',
+		path: 'signup',
 		lazy: () => import('./SignUp'),
 	},
 	{
-		path: '/signin',
+		path: 'signin',
 		lazy: () => import('./SignIn'),
 	},
 	{
-		path: '/profile/:username',
+		path: 'profile/:username',
 		lazy: () => import('./Profile'),
 	},
 	// {
@@ -28,6 +29,15 @@ const router = createBrowserRouter([
 	{
 		path: '*',
 		lazy: () => import('./NotFound'),
+	},
+];
+
+const router = createBrowserRouter([
+	{
+		path: '/',
+		element: <Component />,
+		loader,
+		children: routes,
 	},
 ]);
 

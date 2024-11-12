@@ -1,4 +1,4 @@
-import { Result } from '@utils/Result.ts';
+import { Result } from '@monorepo/shared';
 
 export class UsernameValidation {
 	static registration(

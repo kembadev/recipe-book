@@ -1,4 +1,4 @@
-import { Result } from '@utils/Result.ts';
+import { Result } from '@monorepo/shared';
 
 export class PasswordValidation {
 	static registration(
@@ -19,7 +19,7 @@ export class PasswordValidation {
 
 		if (!/^[a-zA-Z0-9]+$/.test(password)) {
 			return Result.failed(
-				new Error('The password must only contain letters and/or numbers.'),
+				new Error('The password must only contain letters and numbers.'),
 			);
 		}
 

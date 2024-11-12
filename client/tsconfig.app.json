@@ -34,6 +34,12 @@
       ],
       "@src/types/*": [
         "src/types/*"
+      ],
+      "@pages/*": [
+        "src/pages/*"
+      ],
+      "@config": [
+        "src/config.ts"
       ]
     },
     /* Bundler mode */

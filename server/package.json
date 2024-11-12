@@ -4,11 +4,11 @@
   "main": "dist/app.js",
   "type": "module",
   "scripts": {
-    "clean": "rimraf",
+    "postinstall": "cd node_modules/@monorepo/shared && npm run build",
     "copyview": "copyfiles -u 3 ../client/dist/**/*",
     "build:client": "cd ../client && npm run build && cd ../server",
     "dev": "tsx watch --clear-screen=false --exclude \"src/db/uploads/*\" --exclude \"src/db/local/**/*.json\" src/app.ts",
-    "build": "npm run build:client && npm run clean -- dist && tsc && npm run copyview -- dist/view",
+    "build": "npm run build:client && rimraf dist && tsc && npm run copyview -- dist/view",
     "start": "node dist/app.js",
     "start:prod": "cross-env NODE_ENV=production node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -31,12 +31,12 @@
     "tsx": "^4.19.1"
   },
   "dependencies": {
+    "@monorepo/shared": "workspace:*",
     "bcrypt": "5.1.1",
     "cookie-parser": "1.4.7",
     "express": "4.21.1",
     "jsonwebtoken": "9.0.2",
     "lowdb": "7.0.1",
-    "multer": "1.4.5-lts.1",
-    "zod": "3.23.8"
+    "multer": "1.4.5-lts.1"
   }
 }

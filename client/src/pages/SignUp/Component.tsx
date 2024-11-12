@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 
 import { SignUpForm } from '@components/form/SignUpForm.tsx';
 
+Component.displayName = 'SignUp';
+
 export function Component() {
 	const actionData = useActionData<typeof createUserAction>();
 
@@ -15,7 +17,7 @@ export function Component() {
 	}, [actionData]);
 
 	return (
-		<div style={{ alignSelf: 'center' }}>
+		<div style={{ minHeight: '100%', display: 'grid' }}>
 			<SignUpForm />
 		</div>
 	);
