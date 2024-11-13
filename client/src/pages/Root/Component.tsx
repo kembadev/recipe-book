@@ -1,21 +1,19 @@
 import './styles.css';
 
-import { useLoaderData } from 'react-router-typesafe';
-
 import type { getUserAuthLoader } from './loader.ts';
 
+import { useLoaderData } from 'react-router-typesafe';
+import { useTheme } from '@common/hooks/useTheme.ts';
+
 import { Outlet } from 'react-router-dom';
-import { NavBar } from '@components/menus/NavBar.tsx';
+import { NavBar } from '@components/NavBar';
 
-Component.displayName = 'Root';
-
-export function Component() {
+export function Root() {
+	const { theme } = useTheme();
 	const data = useLoaderData<typeof getUserAuthLoader>();
 
-	if (data.error) console.error(data.error);
-
 	return (
-		<div className="page">
+		<div className={`page ${theme}`}>
 			<header className="page__nav-bar">
 				<NavBar userData={data.value} />
 			</header>

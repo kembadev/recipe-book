@@ -1,0 +1,94 @@
+.nav-bar {
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding: 0 15px;
+  font-size: 0.95rem;
+}
+
+.nav-bar>* {
+  align-items: center;
+}
+
+.nav-bar__start {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.2em;
+}
+
+.nav-bar__start button {
+  display: grid;
+  align-items: center;
+  outline: none;
+  border: 1px solid var(--common-hover-color);
+  background-color: transparent;
+  cursor: pointer;
+
+  svg {
+    width: 25px;
+  }
+
+  &:hover {
+    background-color: var(--common-hover-color);
+  }
+}
+
+.nav-bar__end {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+
+  &>div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.nav-bar__recipes-search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-bar.dark {
+  border-bottom: 1px solid var(--dark-border-color);
+
+  .nav-bar__start button {
+    color: var(--light-main-bg-color);
+  }
+
+  .nav-bar__recipes-search input {
+    color: var(--dark-main-text-color);
+    border: 1px solid var(--light-main-bg-color);
+  }
+
+  .nav-bar__recipes-search button {
+    background-color: var(--light-main-bg-color);
+    color: var(--dark-main-bg-color);
+  }
+}
+
+.nav-bar.light {
+  border-bottom: 1px solid var(--light-border-color);
+
+  .nav-bar__start button {
+    color: var(--dark-main-bg-color);
+  }
+
+  .nav-bar__recipes-search input {
+    color: var(--light-main-text-color);
+    border: 1px solid var(--dark-main-bg-color);
+  }
+
+  .nav-bar__recipes-search button {
+    background-color: var(--dark-main-bg-color);
+    color: var(--light-main-bg-color);
+  }
+}

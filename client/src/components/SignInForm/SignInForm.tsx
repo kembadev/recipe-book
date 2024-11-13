@@ -1,4 +1,4 @@
-import './SignUpForm.css';
+import './SignInForm.css';
 
 import { useCallback, FormEvent } from 'react';
 import { useError } from '@common/hooks/useError.ts';
@@ -6,16 +6,16 @@ import { useError } from '@common/hooks/useError.ts';
 import { UsernameValidation } from '@helpers/input-validation/username.ts';
 import { PasswordValidation } from '@helpers/input-validation/password.ts';
 
-import { FormBase } from './FormBase.tsx';
-import { TextInput } from './TextInput.tsx';
-import { PasswordInput } from './PasswordInput.tsx';
+import { FormBase } from '@common/components/FormBase.tsx';
+import { TextInput } from '@common/components/TextInput.tsx';
+import { PasswordInput } from '@common/components/PasswordInput.tsx';
 
-export function SignUpForm() {
+export function SignInForm() {
 	const [usernameValidation, updateUsernameValidation] = useError();
 	const [passwordValidation, updatePasswordValidation] = useError();
 
 	const handleOnUsernameChange = useCallback((username: unknown) => {
-		const { success, error } = UsernameValidation.registration(username);
+		const { success, error } = UsernameValidation.login(username);
 
 		if (!success) return error.message;
 	}, []);
@@ -23,7 +23,7 @@ export function SignUpForm() {
 	const handleOnPasswordChange = useCallback((password: unknown) => {
 		if (typeof password === 'string' && password.length < 7) return;
 
-		const { success, error } = PasswordValidation.registration(password);
+		const { success, error } = PasswordValidation.login(password);
 
 		if (!success) return error.message;
 	}, []);
@@ -33,8 +33,8 @@ export function SignUpForm() {
 			const formData = new FormData(e.target as HTMLFormElement);
 			const { name, password } = Object.fromEntries(formData);
 
-			const usernameValidation = UsernameValidation.registration(name);
-			const passwordValidation = PasswordValidation.registration(password);
+			const usernameValidation = UsernameValidation.login(name);
+			const passwordValidation = PasswordValidation.login(password);
 
 			if (usernameValidation.success && passwordValidation.success) return;
 
@@ -52,13 +52,12 @@ export function SignUpForm() {
 	);
 
 	return (
-		<section className="user-registration">
+		<section className="user-login">
 			<FormBase
-				formLabel="Create account"
-				submitLabel="Create"
+				formLabel="Sign in"
 				onSubmit={handleOnSubmit}
 				method="post"
-				action="/signup"
+				action="/signin"
 			>
 				<TextInput
 					label="Username"
@@ -68,7 +67,7 @@ export function SignUpForm() {
 					validateTextOnChange={handleOnUsernameChange}
 					placeholder="Username"
 					maxLength={14}
-					autoComplete="off"
+					autoComplete="on"
 					spellCheck={false}
 				/>
 				<PasswordInput
@@ -79,7 +78,7 @@ export function SignUpForm() {
 					validatePasswordOnChange={handleOnPasswordChange}
 					placeholder="Password"
 					maxLength={22}
-					autoComplete="off"
+					autoComplete="on"
 					spellCheck={false}
 				/>
 			</FormBase>

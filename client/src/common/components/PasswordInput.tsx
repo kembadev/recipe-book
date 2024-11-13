@@ -10,7 +10,7 @@ import {
 } from 'react';
 
 import { InputWrapper, type ChildrenPropsHelper } from './InputWrapper.tsx';
-import { OpenedEye, ClosedEye } from '@common/components/Icons.tsx';
+import { OpenedEyeIcon, ClosedEyeIcon } from '@common/components/Icons.tsx';
 
 interface PasswordInputProps extends ChildrenPropsHelper {
 	validatePasswordOnChange: (password: unknown) => void | string;
@@ -26,6 +26,8 @@ export function PasswordInput({
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 	const inputRef = useRef<HTMLInputElement>(null);
+	const prevIsPasswordVisible = useRef(isPasswordVisible);
+
 	const inputId = useId();
 	const errorMessageId = useId();
 
@@ -43,7 +45,15 @@ export function PasswordInput({
 	}, [isPasswordVisible]);
 
 	useEffect(() => {
-		if (!inputRef.current) return;
+		if (
+			!inputRef.current ||
+			// avoid focus when rendering for the first time
+			prevIsPasswordVisible.current === isPasswordVisible
+		) {
+			return;
+		}
+
+		prevIsPasswordVisible.current = isPasswordVisible;
 
 		inputRef.current.focus();
 
@@ -72,7 +82,7 @@ export function PasswordInput({
 					className="input-field__password--visibility-btn"
 					onClick={changePasswordVisibility}
 				>
-					{isPasswordVisible ? <OpenedEye /> : <ClosedEye />}
+					{isPasswordVisible ? <OpenedEyeIcon /> : <ClosedEyeIcon />}
 				</button>
 			</div>
 		</InputWrapper>

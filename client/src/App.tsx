@@ -1,15 +1,11 @@
-import './App.css';
-
-import { useTheme } from '@common/hooks/useTheme.ts';
 import { RouterProvider } from 'react-router-dom';
+import ThemeProvider from '@context/ThemeProvider.tsx';
 import router from './pages/router.tsx';
 
 export default function App() {
-	const { theme } = useTheme();
-
 	return (
-		<div className={`app ${theme}`}>
+		<ThemeProvider>
 			<RouterProvider router={router} />
-		</div>
+		</ThemeProvider>
 	);
 }

@@ -1,6 +1,6 @@
 // icons from https://heroicons.com/
 
-function OpenedEye() {
+function OpenedEyeIcon() {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +24,7 @@ function OpenedEye() {
 	);
 }
 
-function ClosedEye() {
+function ClosedEyeIcon() {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,7 @@ function SunIcon() {
 	);
 }
 
-function Bars() {
+function BarsIcon() {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -119,4 +119,11 @@ function Bars() {
 	);
 }
 
-export { OpenedEye, ClosedEye, SearchIcon, MoonIcon, SunIcon, Bars };
+export {
+	OpenedEyeIcon,
+	ClosedEyeIcon,
+	SearchIcon,
+	MoonIcon,
+	SunIcon,
+	BarsIcon,
+};

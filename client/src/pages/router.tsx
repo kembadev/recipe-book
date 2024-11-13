@@ -1,5 +1,5 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
-import { Component, loader } from './Root';
+import { Root, ErrorBoundary, loader } from './Root';
 
 const routes: RouteObject[] = [
 	{
@@ -35,7 +35,8 @@ const routes: RouteObject[] = [
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Component />,
+		element: <Root />,
+		errorElement: <ErrorBoundary />,
 		loader,
 		children: routes,
 	},

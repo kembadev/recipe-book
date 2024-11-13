@@ -1,9 +1,9 @@
 import { Result } from '@monorepo/shared';
 
+type ValidationResult = Result<null, null> | Result<null, Error>;
+
 export class UsernameValidation {
-	static registration(
-		username: unknown,
-	): Result<null, null> | Result<null, Error> {
+	static registration(username: unknown): ValidationResult {
 		if (typeof username !== 'string') {
 			return Result.failed(new Error('The username must be a string.'));
 		}
@@ -24,5 +24,9 @@ export class UsernameValidation {
 		}
 
 		return Result.success(null);
+	}
+
+	static login(username: unknown) {
+		return this.registration(username);
 	}
 }

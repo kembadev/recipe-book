@@ -3,21 +3,27 @@ import type { createUserAction } from './action.ts';
 import { useActionData } from 'react-router-typesafe';
 import { useEffect } from 'react';
 
-import { SignUpForm } from '@components/form/SignUpForm.tsx';
+import { SignUpForm } from '@components/SignUpForm/SignUpForm.tsx';
 
 Component.displayName = 'SignUp';
 
 export function Component() {
-	const actionData = useActionData<typeof createUserAction>();
+	const actionErrorInfo = useActionData<typeof createUserAction>();
 
 	useEffect(() => {
-		if (!actionData) return;
+		if (!actionErrorInfo) return;
 
-		console.log({ actionData });
-	}, [actionData]);
+		console.log({ actionErrorInfo });
+	}, [actionErrorInfo]);
 
 	return (
-		<div style={{ minHeight: '100%', display: 'grid' }}>
+		<div
+			style={{
+				display: 'grid',
+				alignItems: 'center',
+				justifyContent: 'center',
+			}}
+		>
 			<SignUpForm />
 		</div>
 	);
