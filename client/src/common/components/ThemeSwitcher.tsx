@@ -1,10 +1,10 @@
-import './TogglableTheme.css';
+import './ThemeSwitcher.css';
 
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 import { SunIcon, MoonIcon } from './Icons.tsx';
 
-export function TogglableTheme() {
-	const { theme, toggleTheme } = useTheme();
+export function ThemeSwitcher() {
+	const { theme, toggleTheme } = useThemeStore();
 
 	return (
 		<button

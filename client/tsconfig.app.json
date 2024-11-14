@@ -29,14 +29,14 @@
       "@services/*": [
         "src/services/*"
       ],
-      "@context/*": [
-        "src/context/*"
-      ],
       "@src/types/*": [
         "src/types/*"
       ],
       "@pages/*": [
         "src/pages/*"
+      ],
+      "@stores/*": [
+        "src/stores/*"
       ],
       "@config": [
         "src/config.ts"

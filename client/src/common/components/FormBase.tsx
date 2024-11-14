@@ -3,7 +3,7 @@ import './FormBase.css';
 import type { HTMLFormMethod } from '@src/types/app.ts';
 import type { FormEvent, ReactNode } from 'react';
 
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 
 import { Form } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ export function FormBase({
 	method,
 	onSubmit,
 }: FormBaseProps) {
-	const { theme } = useTheme();
+	const theme = useThemeStore(({ theme }) => theme);
 
 	return (
 		<Form

@@ -1,11 +1,11 @@
 import './SignUpLink.css';
 
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 
 import { Link } from 'react-router-dom';
 
 export function SignUpLink() {
-	const { theme } = useTheme();
+	const theme = useThemeStore(({ theme }) => theme);
 
 	return (
 		<Link className={`nav-bar__signup--link ${theme}`} to="/signup">

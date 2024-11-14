@@ -2,7 +2,7 @@ import './InputWrapper.css';
 
 import type { InputHTMLAttributes, ReactNode } from 'react';
 
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 
 interface InputBaseProps {
 	label: string;
@@ -32,7 +32,7 @@ export function InputWrapper({
 	errorMessageId,
 	validationMessage,
 }: InputWrapperProps) {
-	const { theme } = useTheme();
+	const theme = useThemeStore(({ theme }) => theme);
 
 	return (
 		<section className={`input-wrapper ${theme}`}>

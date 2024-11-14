@@ -2,12 +2,12 @@ import './NavBar.css';
 
 import type { PrivateUser } from '@monorepo/shared';
 
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 
-import { Link } from 'react-router-dom';
 import { BarsIcon } from '@common/components/Icons.tsx';
+import { RecipeBookLink } from '@common/components/RecipeBookLink.tsx';
 import { SearchBar } from './SearchBar.tsx';
-import { TogglableTheme } from '@common/components/TogglableTheme.tsx';
+import { ThemeSwitcher } from '@common/components/ThemeSwitcher.tsx';
 import { NavBarUserInfo } from './NavBarUserInfo.tsx';
 
 interface NavBarProps {
@@ -15,7 +15,7 @@ interface NavBarProps {
 }
 
 export function NavBar({ userData }: NavBarProps) {
-	const { theme } = useTheme();
+	const theme = useThemeStore(({ theme }) => theme);
 
 	return (
 		<nav className={`nav-bar ${theme}`}>
@@ -23,14 +23,14 @@ export function NavBar({ userData }: NavBarProps) {
 				<button>
 					<BarsIcon />
 				</button>
-				<Link to="/">Home</Link>
+				<RecipeBookLink />
 			</div>
 			<div className="nav-bar__end">
 				<section className="nav-bar__recipes-search">
 					<SearchBar />
 				</section>
 				<div>
-					<TogglableTheme />
+					<ThemeSwitcher />
 					<section>
 						<NavBarUserInfo userData={userData} />
 					</section>

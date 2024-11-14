@@ -3,13 +3,13 @@ import './styles.css';
 import type { getUserAuthLoader } from './loader.ts';
 
 import { useLoaderData } from 'react-router-typesafe';
-import { useTheme } from '@common/hooks/useTheme.ts';
+import useThemeStore from '@stores/theme.ts';
 
 import { Outlet } from 'react-router-dom';
 import { NavBar } from '@components/NavBar';
 
 export function Root() {
-	const { theme } = useTheme();
+	const theme = useThemeStore(({ theme }) => theme);
 	const data = useLoaderData<typeof getUserAuthLoader>();
 
 	return (

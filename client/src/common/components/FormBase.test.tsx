@@ -1,8 +1,7 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { renderWithThemeProvider } from '../../test-utils.tsx';
 
 import { FormBase } from './FormBase.tsx';
 
@@ -23,7 +22,7 @@ const router = createMemoryRouter([
 
 describe('FormBase component', () => {
 	beforeEach(() => {
-		renderWithThemeProvider(<RouterProvider router={router} />);
+		render(<RouterProvider router={router} />);
 	});
 
 	afterEach(() => {
