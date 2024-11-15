@@ -1,0 +1,21 @@
+.svg-wrapper__rounded-btn {
+  display: grid;
+  place-content: center;
+  width: 35px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--common-hover-color);
+  }
+
+  svg {
+    width: 25px;
+  }
+}

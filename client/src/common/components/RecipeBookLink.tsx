@@ -8,7 +8,7 @@ export function RecipeBookLink() {
 			title="Home page"
 			style={{
 				color: '#fd427b',
-				width: '139px',
+				minWidth: '115px',
 				display: 'flex',
 				alignItems: 'center',
 			}}
