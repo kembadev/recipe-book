@@ -1,1 +1,2 @@
-export { NavBar } from './NavBar.tsx';
+import { NavBar } from './NavBar.tsx';
+export default NavBar;

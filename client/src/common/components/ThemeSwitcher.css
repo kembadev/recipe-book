@@ -1,21 +1,5 @@
 .toggle-theme-btn {
   display: inline-grid;
-  place-content: center;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  border-radius: 50%;
-  padding: var(--main-padding);
-  cursor: pointer;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-.toggle-theme-btn:hover {
-  background-color: var(--common-hover-color);
 }
 
 .toggle-theme-btn.dark {

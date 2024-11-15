@@ -11,7 +11,7 @@ import { SearchBar } from './SearchBar.tsx';
 import { SVGWrapperButton } from '@common/components/SVGWrapperButton.tsx';
 import { SearchIcon, ArrowBackIcon } from '@common/components/Icons.tsx';
 import { ThemeSwitcher } from '@common/components/ThemeSwitcher.tsx';
-import { NavBarUserInfo } from './NavBarUserInfo.tsx';
+import { UserRelatedSection } from './UserRelatedSection.tsx';
 
 interface NavBarProps {
 	userData: PrivateUser | null;
@@ -39,6 +39,7 @@ export function NavBar({ userData }: NavBarProps) {
 					{/* toggle hidden search bar */}
 					<SVGWrapperButton
 						title="Search"
+						size="medium"
 						onClick={() => setIsOverlayVisible(true)}
 					>
 						<SearchIcon />
@@ -46,7 +47,10 @@ export function NavBar({ userData }: NavBarProps) {
 					{/* hidden search bar for small screens */}
 					{isOverlayVisible && (
 						<div className="overlay-search-bar__wrapper">
-							<SVGWrapperButton onClick={() => setIsOverlayVisible(false)}>
+							<SVGWrapperButton
+								size="medium"
+								onClick={() => setIsOverlayVisible(false)}
+							>
 								<ArrowBackIcon />
 							</SVGWrapperButton>
 							<SearchBar autoFocus />
@@ -56,7 +60,7 @@ export function NavBar({ userData }: NavBarProps) {
 				<div>
 					<ThemeSwitcher />
 					<section>
-						<NavBarUserInfo userData={userData} />
+						<UserRelatedSection userData={userData} />
 					</section>
 				</div>
 			</div>

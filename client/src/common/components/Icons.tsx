@@ -8,7 +8,6 @@ function OpenedEyeIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth="1.5"
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"
@@ -32,7 +31,6 @@ function ClosedEyeIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth="1.5"
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"
@@ -51,7 +49,6 @@ function SearchIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"
@@ -70,7 +67,6 @@ function MoonIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"
@@ -89,7 +85,6 @@ function SunIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"
@@ -108,7 +103,6 @@ function BarsIcon() {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			className="size-6"
 		>
 			<path
 				strokeLinecap="round"

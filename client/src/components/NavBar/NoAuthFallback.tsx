@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 
 import { SignInLink } from './SignInLink.tsx';
 import { SignUpLink } from './SignUpLink.tsx';
-import { Otherwise } from './Otherwise.tsx';
 
 const listOfFallbacks: { path: string; Component: () => ReactNode }[] = [
 	{
@@ -17,7 +16,7 @@ const listOfFallbacks: { path: string; Component: () => ReactNode }[] = [
 	},
 ];
 
-export function Fallback() {
+export function NoAuthFallback() {
 	const { pathname } = useLocation();
 
 	const FallbackByPath: (() => ReactNode) | undefined = useMemo(
@@ -25,5 +24,12 @@ export function Fallback() {
 		[pathname],
 	);
 
-	return FallbackByPath ? <FallbackByPath /> : <Otherwise />;
+	return FallbackByPath ? (
+		<FallbackByPath />
+	) : (
+		<div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+			<SignInLink />
+			<SignUpLink />
+		</div>
+	);
 }

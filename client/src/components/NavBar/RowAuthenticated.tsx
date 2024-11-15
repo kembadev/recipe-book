@@ -4,6 +4,6 @@ interface UserProps {
 	userData: PrivateUser;
 }
 
-export function User({ userData }: UserProps) {
+export function RowAuthenticated({ userData }: UserProps) {
 	return <span>{userData.name}</span>;
 }

@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import { InputWrapper, type ChildrenPropsHelper } from './InputWrapper.tsx';
+import { SVGWrapperButton } from './SVGWrapperButton.tsx';
 import { OpenedEyeIcon, ClosedEyeIcon } from '@common/components/Icons.tsx';
 
 interface PasswordInputProps extends ChildrenPropsHelper {
@@ -77,13 +78,13 @@ export function PasswordInput({
 					aria-errormessage={errorMessageId}
 					onChange={handleOnPasswordChange}
 				/>
-				<button
+				<SVGWrapperButton
 					type="button"
-					className="input-field__password--visibility-btn"
+					size="small"
 					onClick={changePasswordVisibility}
 				>
 					{isPasswordVisible ? <OpenedEyeIcon /> : <ClosedEyeIcon />}
-				</button>
+				</SVGWrapperButton>
 			</div>
 		</InputWrapper>
 	);
