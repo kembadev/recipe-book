@@ -2,7 +2,7 @@ import './NavBar.css';
 
 import type { PrivateUser } from '@monorepo/shared';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import useThemeStore from '@stores/theme.ts';
 
 import { BarsIcon } from '@common/components/Icons.tsx';
@@ -22,10 +22,12 @@ export function NavBar({ userData }: NavBarProps) {
 
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
+	const overlaySearchBarId = useId();
+
 	return (
 		<nav className={`nav-bar ${theme}`}>
 			<div className="nav-bar__start">
-				<button>
+				<button aria-label="Open global navigation menu">
 					<BarsIcon />
 				</button>
 				<RecipeBookLink />
@@ -40,13 +42,22 @@ export function NavBar({ userData }: NavBarProps) {
 					<SVGWrapperButton
 						title="Search"
 						size="medium"
+						aria-label="Search a recipe"
+						aria-expanded={isOverlayVisible}
+						aria-controls={overlaySearchBarId}
+						aria-haspopup="dialog"
 						onClick={() => setIsOverlayVisible(true)}
 					>
 						<SearchIcon />
 					</SVGWrapperButton>
 					{/* hidden search bar for small screens */}
 					{isOverlayVisible && (
-						<div className="overlay-search-bar__wrapper">
+						<div
+							id={overlaySearchBarId}
+							className="overlay-search-bar__wrapper"
+							aria-modal="true"
+							role="search"
+						>
 							<SVGWrapperButton
 								size="medium"
 								onClick={() => setIsOverlayVisible(false)}

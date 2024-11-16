@@ -60,7 +60,7 @@
 }
 
 .nav-bar__recipes-search .search-bar__wrapper {
-  width: 100%;
+  width: min(100%, 380px);
 }
 
 .nav-bar__recipes-search>button {

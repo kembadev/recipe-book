@@ -1,4 +1,3 @@
-import LogoWithText from './LogoWithText.tsx';
 import { Link } from 'react-router-dom';
 
 export function RecipeBookLink() {
@@ -7,13 +6,17 @@ export function RecipeBookLink() {
 			to="/"
 			title="Home page"
 			style={{
-				color: '#fd427b',
 				minWidth: '115px',
 				display: 'flex',
 				alignItems: 'center',
 			}}
 		>
-			<LogoWithText />
+			<img
+				aria-hidden="true"
+				src="/logo.svg"
+				alt="logo_image"
+				style={{ pointerEvents: 'none', userSelect: 'none', width: '100%' }}
+			/>
 		</Link>
 	);
 }

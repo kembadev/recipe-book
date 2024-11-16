@@ -12,7 +12,9 @@ export function ThemeSwitcher() {
 		<SVGWrapperButton
 			title="Toggle theme"
 			onClick={toggleTheme}
-			size="medium"
+			size="small"
+			aria-label="Toggle between dark and light themes"
+			aria-live="polite"
 			className={`toggle-theme-btn ${theme}`}
 		>
 			{theme === 'dark' ? <MoonIcon /> : <SunIcon />}
