@@ -1,13 +1,15 @@
 .svg-wrapper__rounded-btn {
-  display: grid;
-  place-content: center;
   border-radius: 50%;
   border: none;
   outline: none;
   background-color: transparent;
   color: inherit;
-  padding: 0;
   cursor: pointer;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 
   &:hover {
     background-color: var(--common-hover-color);
@@ -15,28 +17,19 @@
 }
 
 .svg-wrapper__rounded-btn.small {
-  width: 24px;
-  height: 24px;
-
-  svg {
-    width: 20px;
-  }
+  width: 28px;
+  height: 28px;
+  padding: 5px;
 }
 
 .svg-wrapper__rounded-btn.medium {
-  width: 35px;
-  height: 35px;
-
-  svg {
-    width: 25px;
-  }
+  width: 40px;
+  height: 40px;
+  padding: 8px;
 }
 
 .svg-wrapper__rounded-btn.large {
-  width: 48px;
-  height: 48px;
-
-  svg {
-    width: 42px;
-  }
+  width: 52px;
+  height: 52px;
+  padding: 10px;
 }

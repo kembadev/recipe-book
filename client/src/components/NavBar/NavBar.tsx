@@ -27,9 +27,12 @@ export function NavBar({ userData }: NavBarProps) {
 	return (
 		<nav className={`nav-bar ${theme}`}>
 			<div className="nav-bar__start">
-				<button aria-label="Open global navigation menu">
+				<SVGWrapperButton
+					size="medium"
+					aria-label="Open global navigation menu"
+				>
 					<BarsIcon />
-				</button>
+				</SVGWrapperButton>
 				<RecipeBookLink />
 			</div>
 			<div className="nav-bar__end">

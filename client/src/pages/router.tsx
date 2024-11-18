@@ -14,18 +14,26 @@ const routes: RouteObject[] = [
 		path: 'signin',
 		lazy: () => import('./SignIn'),
 	},
+	// {
+	// 	path: 'new-recipe',
+	// 	lazy: () => import('./CreateRecipe'),
+	// },
+	// {
+	// 	path: 'saved-recipes',
+	// 	lazy: () => import('./SavedRecipes'),
+	// },
+	// {
+	// 	path: 'recipes',
+	// 	lazy: () => import('./Recipes'),
+	// },
+	// {
+	// 	path: 'recipes/:id',
+	// 	lazy: () => import('./SingleRecipe'),
+	// },
 	{
 		path: 'profile/:username',
 		lazy: () => import('./Profile'),
 	},
-	// {
-	// 	path: '/recipes',
-	// 	lazy: () => import('./Recipes'),
-	// },
-	// {
-	// 	path: '/recipes/:id',
-	// 	lazy: () => import('./Recipe'),
-	// },
 	{
 		path: '*',
 		lazy: () => import('./NotFound'),

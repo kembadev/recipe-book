@@ -19,9 +19,7 @@
   font-size: 1em;
 
   &:focus {
-    outline: 1px solid var(--blue) !important;
-    outline-offset: -1px;
-    border: none;
+    border: 1px solid var(--blue) !important;
   }
 
   &::placeholder {

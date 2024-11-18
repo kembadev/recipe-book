@@ -1,0 +1,128 @@
+.nav-bar__user {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 5px;
+}
+
+/* user profile */
+
+.nav-bar__user .profile-wrapper {
+  position: relative;
+}
+
+.nav-bar__user .profile-wrapper>button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.nav-bar__user img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  vertical-align: middle;
+  border-radius: 50%;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* user profile menu */
+
+.profile-wrapper__user-menu {
+  --padding: 8px;
+
+  box-sizing: border-box;
+  width: 240px;
+  border: 1px solid var(--menu-border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.95em;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+
+  &>div+div {
+    border-top: 1px solid var(--menu-border-color);
+  }
+}
+
+.profile-wrapper__user-menu::before {
+  content: "";
+  display: block;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent var(--menu-border-color) transparent;
+  position: absolute;
+  bottom: 100%;
+  right: 8px;
+}
+
+.profile-wrapper__user-menu>div:first-child {
+  padding: var(--padding);
+}
+
+.profile-wrapper__user-menu>div:last-child {
+  display: none;
+}
+
+.profile-wrapper__user-menu ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.profile-wrapper__user-menu ul a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--padding);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: var(--common-hover-color);
+  }
+}
+
+/* themes */
+
+.nav-bar__user.dark {
+  img {
+    box-shadow: 0 0 2px var(--dark-border-color);
+  }
+
+  .profile-wrapper__user-menu {
+    --menu-border-color: var(--light-main-bg-color);
+
+    background-color: var(--dark-main-bg-color);
+  }
+}
+
+.nav-bar__user.light {
+  img {
+    box-shadow: 0 0 2px var(--light-border-color);
+  }
+
+  .profile-wrapper__user-menu {
+    --menu-border-color: var(--dark-main-bg-color);
+
+    background-color: var(--light-main-bg-color);
+  }
+}
+
+@media screen and (max-width: 475px) {
+  .nav-bar__user>a {
+    display: none;
+  }
+
+  .profile-wrapper__user-menu>div:last-child {
+    display: block;
+  }
+}

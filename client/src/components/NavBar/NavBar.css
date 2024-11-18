@@ -20,34 +20,31 @@
   gap: 15px;
 }
 
-.nav-bar__start>button {
-  display: grid;
-  align-items: center;
-  outline: none;
-  border: 1px solid var(--common-hover-color);
-  background-color: transparent;
-  cursor: pointer;
-
-  svg {
-    width: 25px;
-  }
-
-  &:hover {
-    background-color: var(--common-hover-color);
-  }
-}
-
 .nav-bar__end {
   flex: 1;
   display: flex;
   align-items: center;
   gap: 15px;
+}
 
-  /* theme switcher and user related info */
-  &>div {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+/* theme switcher and user related info */
+.nav-bar__end>div {
+  display: flex;
+  align-items: center;
+}
+
+.nav-bar__end>div>section {
+  position: relative;
+  margin-left: 12px;
+  padding-left: 12px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 1px;
+    height: 100%;
   }
 }
 
@@ -76,8 +73,8 @@
   gap: 5px;
   padding: 0 20px;
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
+  z-index: 1;
 
   form {
     flex: 1;
@@ -85,11 +82,17 @@
   }
 }
 
+/* themes config */
+
 .nav-bar.dark {
   border-bottom: 1px solid var(--dark-border-color);
 
   .nav-bar__start button {
     color: var(--light-main-bg-color);
+  }
+
+  .nav-bar__end>div>section::before {
+    background-color: #c3c3c3;
   }
 
   .overlay-search-bar__wrapper {
@@ -102,6 +105,10 @@
 
   .nav-bar__start button {
     color: var(--dark-main-bg-color);
+  }
+
+  .nav-bar__end>div>section::before {
+    background-color: #222;
   }
 
   .overlay-search-bar__wrapper {

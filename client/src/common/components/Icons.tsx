@@ -129,6 +129,80 @@ function ArrowBackIcon() {
 	);
 }
 
+function PlusIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M12 4.5v15m7.5-7.5h-15"
+			/>
+		</svg>
+	);
+}
+
+function BookmarkIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+			/>
+		</svg>
+	);
+}
+
+function UserProfileIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+			/>
+		</svg>
+	);
+}
+
+function SignOutIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="32"
+			height="32"
+			viewBox="0 0 16 16"
+		>
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth="1.5"
+				d="M5.25 2.25h-3.5v12h3.5m5.5-9.5l3.5 3.5l-3.5 3.5m-5-3.5h8.5"
+			/>
+		</svg>
+	);
+}
+
 export {
 	OpenedEyeIcon,
 	ClosedEyeIcon,
@@ -137,4 +211,8 @@ export {
 	SunIcon,
 	BarsIcon,
 	ArrowBackIcon,
+	PlusIcon,
+	BookmarkIcon,
+	UserProfileIcon,
+	SignOutIcon,
 };
