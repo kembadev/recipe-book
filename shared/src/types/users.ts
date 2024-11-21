@@ -7,14 +7,14 @@ export interface User extends UserRegisterSchema {
 	createdAt: string;
 	savedRecipes: string[];
 	createdRecipes: string[];
+	avatar_filename: string | null;
 }
 
 export type PrivateUser = Pick<
 	User,
 	'name' | 'createdAt' | 'createdRecipes' | 'savedRecipes'
->;
+> & {
+	avatar_src: User['avatar_filename'];
+};
 
-export type PublicUser = Pick<
-	PrivateUser,
-	'name' | 'createdAt' | 'createdRecipes'
->;
+export type PublicUser = Omit<PrivateUser, 'savedRecipes'>;

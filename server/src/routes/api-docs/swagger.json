@@ -21,7 +21,8 @@
                   ]
                 },
                 "message": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "Something went wrong."
                 },
                 "data": {
                   "enum": [
@@ -43,7 +44,7 @@
         }
       },
       "401GenericUnauthorized": {
-        "description": "The access token was not found, it's invalid, or the payload did not pass validations.",
+        "description": "The access token was not found, it is invalid, or the payload did not pass validations.",
         "content": {
           "application/json": {
             "schema": {
@@ -51,6 +52,107 @@
               "properties": {
                 "success": {
                   "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Invalid token."
+                },
+                "data": {
+                  "enum": [
+                    null
+                  ]
+                },
+                "errorCode": {
+                  "type": "string",
+                  "default": "UNAUTHORIZED"
+                },
+                "details": {
+                  "enum": [
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "400ImageUpload": {
+        "description": "Either the received file is not an image or some of its properties, such as format, could not be deduced.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/400GenericResBody"
+            }
+          }
+        }
+      },
+      "404GenericNotFound": {
+        "description": "Resource not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResBodyResourceNotFound"
+            }
+          }
+        }
+      },
+      "404RequestingUserNotFound": {
+        "description": "Requesting user not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResBodyResourceNotFound"
+            }
+          }
+        }
+      },
+      "400InvalidJSON": {
+        "description": "Received invalid JSON data.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "default": "Invalid JSON."
+                },
+                "data": {
+                  "enum": [
+                    null
+                  ]
+                },
+                "errorCode": {
+                  "type": "string",
+                  "default": "BAD_REQUEST"
+                },
+                "details": {
+                  "enum": [
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "422GenericDetailedInvalidParams": {
+        "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
                   "enum": [
                     false
                   ]
@@ -64,35 +166,31 @@
                   ]
                 },
                 "errorCode": {
-                  "type": "string",
-                  "example": "UNAUTHORIZED"
+                  "type": "string"
                 },
                 "details": {
-                  "enum": [
-                    null
-                  ]
+                  "type": "array",
+                  "description": "An array containing information about the validations made."
                 }
               }
             }
           }
         }
       },
-      "400BadAccessToken": {
-        "description": "The access token is valid, although the payload may not contain correct information about the user.",
+      "422GenericInvalidParams": {
+        "description": "The request body is incorrect. It may not contain the required information or may be in the wrong format.",
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
               "properties": {
                 "success": {
-                  "type": "boolean",
                   "enum": [
                     false
                   ]
                 },
                 "message": {
-                  "type": "string",
-                  "example": "User not found."
+                  "type": "string"
                 },
                 "data": {
                   "enum": [
@@ -100,8 +198,7 @@
                   ]
                 },
                 "errorCode": {
-                  "type": "string",
-                  "example": "BAD_REQUEST"
+                  "type": "string"
                 },
                 "details": {
                   "enum": [
@@ -139,6 +236,9 @@
           "name": {
             "type": "string"
           },
+          "avatar_src": {
+            "$ref": "#/components/schemas/UserAvatarSrc"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -159,7 +259,7 @@
           }
         }
       },
-      "ResponseBody__PrivateUserData": {
+      "ResBodyWithPrivateUserData": {
         "type": "object",
         "properties": {
           "success": {
@@ -178,6 +278,70 @@
             "enum": [
               null
             ]
+          },
+          "details": {
+            "enum": [
+              null
+            ]
+          }
+        }
+      },
+      "ResBodyResourceNotFound": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "enum": [
+              null
+            ]
+          },
+          "errorCode": {
+            "type": "string",
+            "default": "NOT_FOUND"
+          },
+          "details": {
+            "enum": [
+              null
+            ]
+          }
+        }
+      },
+      "RecipeImageSrc": {
+        "type": "string",
+        "example": "/images/recipes/1233154627811_256613.png"
+      },
+      "UserAvatarSrc": {
+        "type": "string",
+        "example": "/images/avatars/1233154627811_256613.png"
+      },
+      "400GenericResBody": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "enum": [
+              null
+            ]
+          },
+          "errorCode": {
+            "type": "string",
+            "default": "BAD_REQUEST"
           },
           "details": {
             "enum": [
@@ -210,24 +374,9 @@
                       "type": "string"
                     },
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "createdRecipes": {
-                          "type": "array",
-                          "default": []
-                        },
-                        "savedRecipes": {
-                          "type": "array",
-                          "default": []
-                        }
-                      }
+                      "enum": [
+                        null
+                      ]
                     },
                     "errorCode": {
                       "enum": [
@@ -243,6 +392,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400InvalidJSON"
           },
           "409": {
             "description": "Indicates that the received username already exists.",
@@ -283,49 +435,7 @@
             }
           },
           "422": {
-            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string"
-                    },
-                    "details": {
-                      "type": "array",
-                      "description": "An array containing information about the validations made.",
-                      "example": [
-                        {
-                          "code": "too_small",
-                          "minimum": 1,
-                          "type": "string",
-                          "inclusive": true,
-                          "exact": false,
-                          "message": "String must contain at least 1 character(s)",
-                          "path": [
-                            "name"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/422GenericDetailedInvalidParams"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"
@@ -382,10 +492,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
+                  "$ref": "#/components/schemas/ResBodyWithPrivateUserData"
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400InvalidJSON"
           },
           "401": {
             "description": "Some of the authentication methods provided do not match those of the intended user.",
@@ -427,7 +540,7 @@
             }
           },
           "404": {
-            "description": "Some of the indentification methods provided do not match any user in the databases.",
+            "description": "Some of the identification methods provided do not match any user in the databases.",
             "content": {
               "application/json": {
                 "schema": {
@@ -464,50 +577,7 @@
             }
           },
           "422": {
-            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string"
-                    },
-                    "details": {
-                      "type": "array",
-                      "description": "An array containing information about the validations made.",
-                      "example": [
-                        {
-                          "code": "too_small",
-                          "minimum": 1,
-                          "type": "string",
-                          "inclusive": true,
-                          "exact": false,
-                          "message": "String must contain at least 1 character(s)",
-                          "path": [
-                            "name"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/422GenericDetailedInvalidParams"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"
@@ -587,25 +657,106 @@
         }
       }
     },
-    "/api/users/auth": {
-      "get": {
-        "summary": "Check if the user is logged in and get user information.",
+    "/api/users/avatar": {
+      "post": {
+        "summary": "Upload a profile picture.",
+        "description": "Upload an image to use as the profile picture. Session required.",
         "responses": {
-          "200": {
-            "description": "The user is logged in.",
+          "201": {
+            "description": "The image was uploaded successfully.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResponseBody__PrivateUserData"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "avatar_src": {
+                          "$ref": "#/components/schemas/UserAvatarSrc"
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/400BadAccessToken"
+            "$ref": "#/components/responses/400ImageUpload"
           },
           "401": {
             "$ref": "#/components/responses/401GenericUnauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/404RequestingUserNotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/422GenericInvalidParams"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        },
+        "requestBody": {
+          "description": "The information to extract the image from.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar_image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "avatar_image"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/auth": {
+      "get": {
+        "summary": "Check if the user is logged in and get user information.",
+        "responses": {
+          "200": {
+            "description": "The user is authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResBodyWithPrivateUserData"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401GenericUnauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/404RequestingUserNotFound"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"
@@ -644,6 +795,9 @@
                         "id": {
                           "type": "string",
                           "format": "uuid"
+                        },
+                        "image_src": {
+                          "$ref": "#/components/schemas/RecipeImageSrc"
                         }
                       }
                     },
@@ -663,43 +817,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400BadAccessToken"
+            "$ref": "#/components/responses/400ImageUpload"
           },
           "401": {
             "$ref": "#/components/responses/401GenericUnauthorized"
           },
+          "404": {
+            "$ref": "#/components/responses/404RequestingUserNotFound"
+          },
           "422": {
-            "description": "Either the request body format is invalid or the parameters passed don't meet the minimum requirements.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string"
-                    },
-                    "details": {
-                      "type": "array",
-                      "description": "An array containing information about the validations made."
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/422GenericDetailedInvalidParams"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"
@@ -753,7 +880,7 @@
                     "minLength": 1,
                     "example": "20min"
                   },
-                  "yield": {
+                  "recipeYield": {
                     "type": "integer",
                     "format": "int32",
                     "description": "Number of servings.",
@@ -774,7 +901,7 @@
                   "steps",
                   "prep_time",
                   "cook_time",
-                  "yield",
+                  "recipeYield",
                   "visibility"
                 ]
               }
@@ -825,9 +952,8 @@
                           "type": "string",
                           "nullable": true
                         },
-                        "image_url": {
-                          "type": "string",
-                          "nullable": true
+                        "image_src": {
+                          "$ref": "#/components/schemas/RecipeImageSrc"
                         },
                         "ingredients": {
                           "$ref": "#/components/schemas/RecipeIngredients"
@@ -844,7 +970,7 @@
                         "cook_time": {
                           "type": "string"
                         },
-                        "yield": {
+                        "recipeYield": {
                           "type": "integer",
                           "description": "Number of servings.",
                           "example": 1
@@ -911,9 +1037,8 @@
                           "type": "string",
                           "nullable": true
                         },
-                        "image_url": {
-                          "type": "string",
-                          "nullable": true
+                        "image_src": {
+                          "$ref": "#/components/schemas/RecipeImageSrc"
                         },
                         "ingredients": {
                           "$ref": "#/components/schemas/RecipeIngredients"
@@ -930,7 +1055,7 @@
                         "cook_time": {
                           "type": "string"
                         },
-                        "yield": {
+                        "recipeYield": {
                           "type": "integer",
                           "description": "Number of servings.",
                           "example": 1
@@ -965,39 +1090,7 @@
             }
           },
           "404": {
-            "description": "The recipe was not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string",
-                      "default": "NOT_FOUND"
-                    },
-                    "details": {
-                      "enum": [
-                        null
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/404GenericNotFound"
           },
           "500": {
             "$ref": "#/components/responses/500InternalError"

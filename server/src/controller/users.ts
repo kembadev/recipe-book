@@ -43,11 +43,7 @@ export class UsersController {
 		}
 
 		if (result.success) {
-			res.status(201).json(
-				ResponseSchema.success({
-					data: result.value,
-				}),
-			);
+			res.status(201).json(ResponseSchema.success({ data: null }));
 
 			return;
 		}
@@ -160,10 +156,10 @@ export class UsersController {
 		const userInfo = await UsersModule.getInfo(user.id);
 
 		if (!userInfo) {
-			res.status(400).json(
+			res.status(404).json(
 				ResponseSchema.failed({
 					message: 'User not found.',
-					errorCode: ERROR_CODES.BAD_REQUEST,
+					errorCode: ERROR_CODES.NOT_FOUND,
 				}),
 			);
 
@@ -182,5 +178,64 @@ export class UsersController {
 		}
 
 		res.json(ResponseSchema.success({ data: userInfo }));
+	};
+
+	static uploadAvatar: RequestHandler = async (req, res) => {
+		const { id: userId } = req.session as TokenPayloadUser;
+
+		const file = req.file;
+
+		if (!file) {
+			res.status(422).json(
+				ResponseSchema.failed({
+					message: 'No file provided.',
+					errorCode: ERROR_CODES.INVALID_PARAMS,
+				}),
+			);
+
+			return;
+		}
+
+		const result = await UsersModule.uploadAvatar({ userId, file });
+
+		if (!result) {
+			res.status(404).json(
+				ResponseSchema.failed({
+					message: 'User not found.',
+					errorCode: ERROR_CODES.NOT_FOUND,
+				}),
+			);
+
+			return;
+		}
+
+		const { success, value, error } = result;
+
+		if (success) {
+			const { filename } = value;
+			const avatar_src = `/images/avatars/${filename}`;
+
+			res.status(201).json(ResponseSchema.success({ data: { avatar_src } }));
+
+			return;
+		}
+
+		if (error.name === 'UploadError') {
+			res.status(400).json(
+				ResponseSchema.failed({
+					message: error.message,
+					errorCode: ERROR_CODES.BAD_REQUEST,
+				}),
+			);
+
+			return;
+		}
+
+		res.status(500).json(
+			ResponseSchema.failed({
+				message: 'Could not upload the image.',
+				errorCode: ERROR_CODES.INTERNAL_ERROR,
+			}),
+		);
 	};
 }

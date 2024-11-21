@@ -8,13 +8,25 @@ import type {
 // Module
 
 export type CreateRecipe = (info: {
-	data: RecipeSchema & { image_url: string | null };
+	data: RecipeSchema;
 	userId: string;
+	file?: Express.Multer.File;
 }) => Promise<
 	| Error
 	| { success: false; errorMessage: string }
-	| { success: true; value: Pick<Recipe, 'createdAt'> & { id: string } }
+	| {
+			success: true;
+			value: Pick<Recipe, 'createdAt'> & {
+				id: string;
+				filename: Recipe['image_filename'];
+			};
+	  }
 >;
+
+type ImageFileName = Pick<Recipe, 'image_filename'>;
+
+type BasePublicRecipeData = Omit<PublicRecipe, 'image_src'> & ImageFileName;
+type BasePrivateRecipeData = Omit<PrivateRecipe, 'image_src'> & ImageFileName;
 
 export type GetById = (info: {
 	recipeId: string;
@@ -22,6 +34,6 @@ export type GetById = (info: {
 }) => Promise<
 	| Error
 	| undefined
-	| { isPartialBody: true; value: PublicRecipe }
-	| { isPartialBody: false; value: PrivateRecipe }
+	| { isPartialBody: true; value: BasePublicRecipeData }
+	| { isPartialBody: false; value: BasePrivateRecipeData }
 >;

@@ -1,19 +1,20 @@
 import { Router } from 'express';
+
 import { RecipesController } from '../controller/recipes.js';
 import { authorizationMiddleware } from '../middlewares/authorization.js';
 import {
-	processRecipeMiddleware,
-	processRecipeErrorMiddleware,
-} from '../middlewares/processRecipe.js';
+	processImageUpload,
+	processImageUploadErrorHandling,
+} from '../middlewares/processImageUpload.js';
 
 export const recipesRouter = Router();
 
 recipesRouter.post(
 	'/',
 	authorizationMiddleware,
-	processRecipeMiddleware,
+	processImageUpload.single('image'),
+	processImageUploadErrorHandling,
 	RecipesController.create,
-	processRecipeErrorMiddleware,
 );
 
 // recipesRouter.get('/', RecipesController.getAll);

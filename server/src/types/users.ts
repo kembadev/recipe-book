@@ -1,4 +1,6 @@
 import type { User, PrivateUser } from '@monorepo/shared';
+import type { Result } from '@monorepo/shared';
+import type { UploadError } from '../error-handling/upload.js';
 
 export interface TokenPayloadUser {
 	id: string;
@@ -11,7 +13,7 @@ type ProvidedUserInfoLogin = Pick<User, 'name' | 'password'>;
 
 export type CreateUser = (userInfo: ProvidedUserInfoRegister) => Promise<
 	| Error
-	| { success: true; value: PrivateUser }
+	| { success: true }
 	| {
 			success: false;
 			paramsError: Partial<Record<keyof ProvidedUserInfoRegister, string>>;
@@ -30,3 +32,13 @@ export type LoginUser = (userInfo: ProvidedUserInfoLogin) => Promise<
 export type GetInfo = (
 	userId: string,
 ) => Promise<Error | PrivateUser | undefined>;
+
+type UploadAvatarResult =
+	| Result<null, Error>
+	| Result<{ filename: string }, null>
+	| undefined;
+
+export type UploadAvatar = (props: {
+	userId: string;
+	file: Express.Multer.File;
+}) => Promise<UploadAvatarResult | Result<null, UploadError>>;

@@ -16,6 +16,6 @@ export const recipeSchema = z.object({
 	steps: stringSchemaBase.array().nonempty(),
 	prep_time: stringSchemaBase,
 	cook_time: stringSchemaBase,
-	yield: z.number().int().min(1),
+	recipeYield: z.number().int().min(1),
 	visibility: z.enum(['public', 'private']),
 });

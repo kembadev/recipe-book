@@ -1,31 +1,15 @@
 import type { RequestHandler } from 'express';
 import type { TokenPayloadUser } from '../types/users.js';
 
-import path from 'node:path';
-
 import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 import { RecipesModule } from '../model/recipes-local.js';
 import { validateRecipe } from '../schemas/recipes.js';
 
-import { getRemoveFile } from '../helpers/getRemoveFile.js';
-
 export class RecipesController {
 	static create: RequestHandler = async (req, res) => {
-		const destination = req.file?.destination;
-		const filename = req.file?.filename;
-
-		let removeImageFile: () => unknown = () => {};
-
-		if (typeof destination === 'string' && typeof filename === 'string') {
-			const imageFileUrl = path.join(destination, filename);
-			removeImageFile = getRemoveFile(imageFileUrl);
-		}
-
 		const { success: isValidRecipe, error, data } = validateRecipe(req.body);
 
 		if (!isValidRecipe) {
-			removeImageFile();
-
 			res.status(422).json(
 				ResponseSchema.failed({
 					message: 'Invalid request body format.',
@@ -37,19 +21,11 @@ export class RecipesController {
 			return;
 		}
 
-		const user = req.session as TokenPayloadUser;
+		const { id: userId } = req.session as TokenPayloadUser;
 
-		const result = await RecipesModule.create({
-			data: {
-				...data,
-				image_url: filename ?? null,
-			},
-			userId: user.id,
-		});
+		const result = await RecipesModule.create({ data, userId, file: req.file });
 
 		if (result instanceof Error) {
-			removeImageFile();
-
 			res.status(500).json(
 				ResponseSchema.failed({
 					message: 'Could not create the recipe.',
@@ -60,22 +36,24 @@ export class RecipesController {
 			return;
 		}
 
+		// maybe the userId didn't match any in the db
 		if (!result.success) {
-			removeImageFile();
-
-			res.status(400).json(
+			res.status(404).json(
 				ResponseSchema.failed({
 					message: result.errorMessage,
-					errorCode: ERROR_CODES.BAD_REQUEST,
+					errorCode: ERROR_CODES.NOT_FOUND,
 				}),
 			);
 
 			return;
 		}
 
+		const { filename, id, createdAt } = result.value;
+		const image_src = filename ? `/images/recipes/${filename}` : null;
+
 		res.status(201).json(
 			ResponseSchema.success({
-				data: result.value,
+				data: { id, createdAt, image_src },
 			}),
 		);
 	};
@@ -111,20 +89,20 @@ export class RecipesController {
 			return;
 		}
 
+		const { image_filename, ...rest } = result.value;
+
+		const image_src = image_filename
+			? `/images/recipes/${image_filename}`
+			: null;
+
+		const data = { image_src, ...rest };
+
 		if (result.isPartialBody) {
-			res.status(206).json(
-				ResponseSchema.success({
-					data: result.value,
-				}),
-			);
+			res.status(206).json(ResponseSchema.success({ data }));
 
 			return;
 		}
 
-		res.json(
-			ResponseSchema.success({
-				data: result.value,
-			}),
-		);
+		res.json(ResponseSchema.success({ data }));
 	};
 }

@@ -46,7 +46,7 @@ export function RowAuthenticated({ userData }: UserProps) {
 					aria-haspopup="true"
 					onClick={() => setIsProfileMenuVisible(!isProfileMenuVisible)}
 				>
-					<img src={userData.picture ?? '/profile-picture-template.webp'} />
+					<img src={userData.avatar_src ?? '/profile-picture-template.webp'} />
 				</button>
 				{isProfileMenuVisible && (
 					<section
