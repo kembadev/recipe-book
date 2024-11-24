@@ -1,7 +1,7 @@
-import type z from 'zod';
+import type { InferType } from 'yup';
 import type { recipeSchema } from '../schemas/recipes.js';
 
-export type RecipeSchema = z.infer<typeof recipeSchema>;
+export type RecipeSchema = InferType<typeof recipeSchema>;
 
 export interface Recipe extends RecipeSchema {
 	image_filename: string | null;
@@ -18,8 +18,7 @@ export type PrivateRecipe = Pick<
 	| 'steps'
 	| 'createdAt'
 	| 'lastEdit'
-	| 'cook_time'
-	| 'prep_time'
+	| 'timeSpent'
 	| 'recipeYield'
 	| 'visibility'
 > & {

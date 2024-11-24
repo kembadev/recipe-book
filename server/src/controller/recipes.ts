@@ -3,18 +3,18 @@ import type { TokenPayloadUser } from '../types/users.js';
 
 import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 import { RecipesModule } from '../model/recipes-local.js';
-import { validateRecipe } from '../schemas/recipes.js';
+import { parseRecipe } from '../schemas/recipes.js';
 
 export class RecipesController {
 	static create: RequestHandler = async (req, res) => {
-		const { success: isValidRecipe, error, data } = validateRecipe(req.body);
+		const { success: isValidRecipe, error, value } = parseRecipe(req.body);
 
 		if (!isValidRecipe) {
 			res.status(422).json(
 				ResponseSchema.failed({
 					message: 'Invalid request body format.',
 					errorCode: ERROR_CODES.INVALID_PARAMS,
-					details: JSON.parse(error.message),
+					details: error.errors,
 				}),
 			);
 
@@ -23,7 +23,11 @@ export class RecipesController {
 
 		const { id: userId } = req.session as TokenPayloadUser;
 
-		const result = await RecipesModule.create({ data, userId, file: req.file });
+		const result = await RecipesModule.create({
+			data: value,
+			userId,
+			file: req.file,
+		});
 
 		if (result instanceof Error) {
 			res.status(500).json(

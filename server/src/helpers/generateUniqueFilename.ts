@@ -1,12 +1,8 @@
-import path from 'node:path';
-
-export function generateUniqueFilename(originalName: string) {
-	const extension = path.extname(originalName);
-
-	if (extension === '' || extension === '.') return null;
-
+/**
+ * @returns A filename without any extension
+ */
+export function generateUniqueFilename() {
 	const randomInt = Math.round(Math.random() * 1e6);
-	const filename = Date.now() + '_' + randomInt + '.' + extension;
 
-	return filename;
+	return Date.now() + '_' + randomInt;
 }

@@ -30,7 +30,7 @@ export class LocalDB<Q> {
 		return existsSync(this.#path);
 	}
 
-	async #read(): Promise<Result<null, null> | Result<null, LocalDBError>> {
+	async #read() {
 		if (!this.#doesPathExist()) {
 			return Result.failed(new LocalDBError('Local db file not found.'));
 		}
@@ -45,12 +45,12 @@ export class LocalDB<Q> {
 		}
 	}
 
-	async #updateDB(fn: (db: DB<Q>) => DB<Q>) {
+	async #updateDB(fn: (db: DB<Q>) => DB<Q> | Promise<DB<Q>>) {
 		const { success, error } = await this.#read();
 
 		if (!success) return error;
 
-		this.#db.data = fn(this.#db.data);
+		this.#db.data = await fn(this.#db.data);
 		await this.#db.write(); // -> will potentially become too slow
 
 		return null;
@@ -112,7 +112,7 @@ export class LocalDB<Q> {
 		});
 	}
 
-	async updateOne(matcher: Matcher<Q>, fn: (value: Q) => Q) {
+	async updateOne(matcher: Matcher<Q>, fn: (value: Q) => Q | Promise<Q>) {
 		const item = await this.findOne(matcher);
 
 		if (!Array.isArray(item)) return item;
@@ -120,10 +120,10 @@ export class LocalDB<Q> {
 		const _id = item[0];
 
 		return new Promise<Item<Q>>(resolve => {
-			this.#updateDB(db => {
+			this.#updateDB(async db => {
 				const { [_id]: value, ...rest } = db;
 
-				const updatedValue = fn(value);
+				const updatedValue = await fn(value);
 
 				resolve([_id, updatedValue]);
 

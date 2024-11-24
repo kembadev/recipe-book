@@ -1,59 +1,55 @@
-import type { ErrorRequestHandler } from 'express';
+import { supportedImageFormats } from '../consts.js';
 
 import path from 'node:path';
 
 import multer from 'multer';
-import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 
 import {
-	UploadError,
 	InvalidMIMETypeUploadError,
+	InvalidExtensionUploadError,
 } from '../error-handling/upload.js';
 
-export const processImageUpload = multer({
-	fileFilter: (_req, file, cb) => {
-		const extension = path.extname(file.originalname);
+interface SingleImageUploadProps {
+	/** Max number of non-file fields (default: 20) */
+	maxFields?: number;
+	/** Max size of each non-file field value in bytes (default: 100kb) */
+	maxFieldSize?: number;
+	/** Fieldname of the desired file field */
+	fieldName: string;
+	/** Max size of the file in bytes (default: 5mb) */
+	fileSizeLimit?: number;
+}
 
-		const isValidMIMEType = /^image\//.test(file.mimetype);
-		const isValidExtension = ['.', ''].every(n => extension !== n);
+export function processSingleImageUpload({
+	fieldName,
+	fileSizeLimit = 5e6,
+	maxFieldSize = 1e5,
+	maxFields = 20,
+}: SingleImageUploadProps) {
+	return multer({
+		storage: multer.memoryStorage(),
+		limits: {
+			files: 1,
+			fileSize: fileSizeLimit,
+			fields: maxFields,
+			fieldSize: maxFieldSize,
+		},
+		fileFilter: async (_req, file, cb) => {
+			if (!/^image\//.test(file.mimetype)) {
+				return cb(
+					new InvalidMIMETypeUploadError(
+						`The file provided must be an image. Received ${file.mimetype}.`,
+					),
+				);
+			}
 
-		if (isValidMIMEType && isValidExtension) return cb(null, true);
+			const ext = path.extname(file.originalname).slice(1);
 
-		if (isValidMIMEType) {
-			return cb(new UploadError('The image format could not be found.'));
-		}
+			if (!supportedImageFormats.includes(ext)) {
+				return cb(new InvalidExtensionUploadError('Invalid extension.'));
+			}
 
-		cb(
-			new InvalidMIMETypeUploadError(
-				`The file provided must be an image. Received ${file.mimetype}`,
-			),
-		);
-	},
-});
-
-export const processImageUploadErrorHandling: ErrorRequestHandler = (
-	err,
-	_req,
-	res,
-	next,
-) => {
-	if (err instanceof multer.MulterError) {
-		res.status(500).json(
-			ResponseSchema.failed({
-				message: 'Something went wrong.',
-				errorCode: ERROR_CODES.INTERNAL_ERROR,
-			}),
-		);
-
-		return;
-	}
-
-	if (!(err instanceof UploadError)) return next(err);
-
-	res.status(400 /* or non-standard 415 for InvalidMIMETypeUploadError */).json(
-		ResponseSchema.failed({
-			message: err.message,
-			errorCode: ERROR_CODES.BAD_REQUEST,
-		}),
-	);
-};
+			cb(null, true);
+		},
+	}).single(fieldName);
+}

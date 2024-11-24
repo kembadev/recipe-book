@@ -10,6 +10,7 @@ import RecipesDB from '../db/local/recipes.mjs';
 import UsersDB from '../db/local/users.mjs';
 
 import { generateUniqueFilename } from '../helpers/generateUniqueFilename.js';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,15 +34,24 @@ export class RecipesModule {
 			};
 		}
 
-		let filename = file?.originalname
-			? generateUniqueFilename(file.originalname)
-			: null;
+		let filename: string | null = generateUniqueFilename() + '.jpg';
+		const filePath = path.join(recipeImagePathUrl, filename);
 
-		const filePath = filename ? path.join(recipeImagePathUrl, filename) : null;
+		// try to save the image (and converting it)
+		if (file?.buffer) {
+			let manipulatedBuffer;
 
-		if (filePath) {
+			try {
+				manipulatedBuffer = await sharp(file.buffer)
+					.resize({ width: 600, height: 600, fit: 'inside' })
+					.jpeg()
+					.toBuffer();
+			} catch {
+				return new Error('Something went wrong.');
+			}
+
 			await new Promise(resolve => {
-				fs.writeFile(filePath, file!.buffer, err => {
+				fs.writeFile(filePath, manipulatedBuffer, err => {
 					if (err) filename = null;
 
 					resolve(null);
@@ -60,9 +70,12 @@ export class RecipesModule {
 
 		const recipeId = await RecipesDB.addOne(recipe);
 
+		// delete the image, if created, and return the error
 		if (recipeId instanceof Error) {
 			await new Promise(resolve => {
-				if (filePath) fs.rmdir(filePath, resolve);
+				if (fs.existsSync(filePath)) {
+					return fs.unlink(filePath, resolve);
+				}
 
 				resolve(null);
 			});

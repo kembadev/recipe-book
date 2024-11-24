@@ -1,11 +1,11 @@
 import { Router } from 'express';
 
 import { UsersController } from '../controller/users.js';
+
 import { authorizationMiddleware } from '../middlewares/authorization.js';
-import {
-	processImageUpload,
-	processImageUploadErrorHandling,
-} from '../middlewares/processImageUpload.js';
+import { processSingleImageUpload } from '../middlewares/processImageUpload.js';
+import { validateSingleImageFile } from '../middlewares/validateSingleImageFile.js';
+import { handleFileProcessingError } from '../middlewares/fileProcessingError.js';
 
 export const usersRouter = Router();
 
@@ -15,8 +15,12 @@ usersRouter.post('/logout', UsersController.logout);
 usersRouter.post(
 	'/avatar',
 	authorizationMiddleware,
-	processImageUpload.single('avatar_image'),
-	processImageUploadErrorHandling,
+	processSingleImageUpload({
+		fieldName: 'avatar_image',
+		maxFields: 0,
+	}),
+	validateSingleImageFile(true),
+	handleFileProcessingError,
 	UsersController.uploadAvatar,
 );
 

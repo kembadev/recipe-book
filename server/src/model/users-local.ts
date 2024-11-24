@@ -18,7 +18,7 @@ import bcrypt from 'bcrypt';
 
 import { generateUniqueFilename } from '../helpers/generateUniqueFilename.js';
 import { Result } from '@monorepo/shared';
-import { UploadError } from '../error-handling/upload.js';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,12 +32,13 @@ if (!fs.existsSync(avatarImagePathUrl)) {
 export class UsersModule {
 	static create: CreateUser = async ({ name, password }) => {
 		const userInDB = await UsersDB.findOne(
-			(_id, { name: nameInUse }) => nameInUse === name,
+			(_id, { name: nameInUse }) =>
+				nameInUse.toLowerCase() === name.toLowerCase(),
 		);
 
 		if (userInDB instanceof Error) return userInDB;
 
-		if (userInDB !== undefined) {
+		if (userInDB) {
 			return {
 				success: false,
 				paramsError: {
@@ -123,31 +124,50 @@ export class UsersModule {
 	};
 
 	static uploadAvatar: UploadAvatar = async ({ userId, file }) => {
-		const avatar_filename = generateUniqueFilename(file.originalname);
+		const avatar_filename = generateUniqueFilename() + '.jpg';
 
-		if (!avatar_filename) {
-			return Result.failed(
-				new UploadError('The image format could not be found.'),
-			);
+		let manipulatedBuffer;
+
+		try {
+			manipulatedBuffer = await sharp(file.buffer)
+				.resize({ width: 300, height: 300, fit: 'inside' })
+				.jpeg()
+				.toBuffer();
+		} catch {
+			return Result.failed(new Error('Something went wrong.'));
 		}
 
 		return new Promise(resolve => {
 			const filePath = path.join(avatarImagePathUrl, avatar_filename);
 
-			fs.writeFile(filePath, file.buffer, async err => {
+			fs.writeFile(filePath, manipulatedBuffer, async err => {
 				if (err) return resolve(Result.failed(err));
 
-				const user = await UsersDB.updateOne(userId, userData => ({
-					...userData,
-					avatar_filename,
-				}));
+				const user = await UsersDB.updateOne(userId, async userData => {
+					const prevFilename = userData.avatar_filename;
+
+					// if exists, delete the previous avatar
+					if (prevFilename) {
+						await new Promise(resolve => {
+							const prevFilePath = path.join(avatarImagePathUrl, prevFilename);
+
+							if (fs.existsSync(prevFilePath)) {
+								return fs.unlink(prevFilePath, resolve);
+							}
+
+							return resolve(null);
+						});
+					}
+
+					return { ...userData, avatar_filename };
+				});
 
 				if (Array.isArray(user)) {
 					return resolve(Result.success({ filename: avatar_filename }));
 				}
 
 				await new Promise(resolve => {
-					fs.rmdir(filePath, resolve);
+					fs.unlink(filePath, resolve);
 				});
 
 				if (!user) return resolve(user);

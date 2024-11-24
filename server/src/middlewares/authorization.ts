@@ -1,6 +1,10 @@
-import { RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 import { ERROR_CODES, ResponseSchema } from '@monorepo/shared';
 
+/**
+ * Checks whether the request.session object is populated with a TokenPayloadUser,
+ * and if not, a response with statusCode 401 is sent
+ */
 export const authorizationMiddleware: RequestHandler = (req, res, next) => {
 	const user = req.session;
 

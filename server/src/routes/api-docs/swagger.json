@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.0",
   "info": {
     "title": "Recipes management API",
     "version": "1.0.0",
@@ -80,7 +80,7 @@
         }
       },
       "400ImageUpload": {
-        "description": "Either the received file is not an image or some of its properties, such as format, could not be deduced.",
+        "description": "Either the received file is not an image or some of its properties, such as format, are invalid.",
         "content": {
           "application/json": {
             "schema": {
@@ -218,15 +218,29 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
             },
             "quantity": {
               "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
               "example": 1
             },
-            "measurement_unit": {
-              "type": "string"
+            "measurementUnit": {
+              "type": "string",
+              "enum": [
+                "unit",
+                "gram",
+                "milliliter"
+              ]
             }
+          },
+          "example": {
+            "name": "sugar",
+            "quantity": 460,
+            "measurementUnit": "gram"
           }
         }
       },
@@ -316,11 +330,11 @@
       },
       "RecipeImageSrc": {
         "type": "string",
-        "example": "/images/recipes/1233154627811_256613.png"
+        "example": "/images/recipes/1233154627811_256613.jpg"
       },
       "UserAvatarSrc": {
         "type": "string",
-        "example": "/images/avatars/1233154627811_256613.png"
+        "example": "/images/avatars/1233154627811_256613.jpg"
       },
       "400GenericResBody": {
         "type": "object",
@@ -847,8 +861,7 @@
                   },
                   "description": {
                     "type": "string",
-                    "nullable": true,
-                    "minLength": 1,
+                    "maxLength": 600,
                     "example": "Cookies recipe description"
                   },
                   "image": {
@@ -863,28 +876,35 @@
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "minLength": 1
+                      "minLength": 1,
+                      "maxLength": 400,
+                      "example": "step 1"
                     },
-                    "example": [
-                      "step 1",
-                      "step 2"
-                    ]
+                    "maxItems": 30
                   },
-                  "prep_time": {
-                    "type": "string",
-                    "minLength": 1,
-                    "example": "1h"
-                  },
-                  "cook_time": {
-                    "type": "string",
-                    "minLength": 1,
-                    "example": "20min"
+                  "timeSpent": {
+                    "type": "object",
+                    "properties": {
+                      "prepTime": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 14400,
+                        "example": 1800
+                      },
+                      "cookTime": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 57600,
+                        "example": 3600
+                      }
+                    }
                   },
                   "recipeYield": {
-                    "type": "integer",
-                    "format": "int32",
                     "description": "Number of servings.",
-                    "minimum": 1
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000,
+                    "example": 20
                   },
                   "visibility": {
                     "type": "string",
@@ -899,8 +919,7 @@
                   "description",
                   "ingredients",
                   "steps",
-                  "prep_time",
-                  "cook_time",
+                  "timeSpent",
                   "recipeYield",
                   "visibility"
                 ]

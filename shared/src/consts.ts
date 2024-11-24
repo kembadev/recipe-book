@@ -1,12 +1,7 @@
-export const measurementUnits = [
-	'cups',
-	'grams',
-	'liters',
-	'milliliters',
-	'ounces',
-	'pieces',
-	'tablespoons',
-	'teaspoons',
-	'pounds',
-	'kilograms',
+export const ingredientsMeasurementUnits = [
+	'unit',
+	'gram',
+	'milliliter',
 ] as const;
+
+export const visibility = ['public', 'private'] as const;

@@ -183,18 +183,8 @@ export class UsersController {
 	static uploadAvatar: RequestHandler = async (req, res) => {
 		const { id: userId } = req.session as TokenPayloadUser;
 
-		const file = req.file;
-
-		if (!file) {
-			res.status(422).json(
-				ResponseSchema.failed({
-					message: 'No file provided.',
-					errorCode: ERROR_CODES.INVALID_PARAMS,
-				}),
-			);
-
-			return;
-		}
+		// verified by validateSingleImageFile middleware
+		const file = req.file!;
 
 		const result = await UsersModule.uploadAvatar({ userId, file });
 
@@ -209,24 +199,13 @@ export class UsersController {
 			return;
 		}
 
-		const { success, value, error } = result;
+		const { success, value } = result;
 
 		if (success) {
 			const { filename } = value;
 			const avatar_src = `/images/avatars/${filename}`;
 
 			res.status(201).json(ResponseSchema.success({ data: { avatar_src } }));
-
-			return;
-		}
-
-		if (error.name === 'UploadError') {
-			res.status(400).json(
-				ResponseSchema.failed({
-					message: error.message,
-					errorCode: ERROR_CODES.BAD_REQUEST,
-				}),
-			);
 
 			return;
 		}

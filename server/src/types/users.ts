@@ -1,6 +1,5 @@
 import type { User, PrivateUser } from '@monorepo/shared';
 import type { Result } from '@monorepo/shared';
-import type { UploadError } from '../error-handling/upload.js';
 
 export interface TokenPayloadUser {
 	id: string;
@@ -41,4 +40,4 @@ type UploadAvatarResult =
 export type UploadAvatar = (props: {
 	userId: string;
 	file: Express.Multer.File;
-}) => Promise<UploadAvatarResult | Result<null, UploadError>>;
+}) => Promise<UploadAvatarResult>;

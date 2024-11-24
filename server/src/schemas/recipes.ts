@@ -1,11 +1,55 @@
-import { recipeSchema } from '@monorepo/shared';
+import type { ValidationError } from 'yup';
+
+import { recipeSchema, Result } from '@monorepo/shared';
 
 function validateRecipe(input: unknown) {
-	return recipeSchema.safeParse(input);
+	try {
+		return Result.success(
+			recipeSchema.validateSync(input, {
+				strict: true,
+				abortEarly: false,
+				stripUnknown: true,
+				disableStackTrace: true,
+			}),
+		);
+	} catch (err) {
+		return Result.failed(err as ValidationError);
+	}
 }
 
-function validatePartialRecipe(input: unknown) {
-	return recipeSchema.safeParse(input);
+function semiParseObject(input: Record<string, unknown>, fieldNames: string[]) {
+	const parsed = { ...input };
+
+	for (const key of fieldNames) {
+		const value = parsed[key];
+
+		if (typeof value !== 'string') continue;
+
+		try {
+			parsed[key] = JSON.parse(value);
+		} catch {
+			/* empty */
+		}
+	}
+
+	return parsed;
 }
 
-export { validateRecipe, validatePartialRecipe };
+function isObject(input: unknown): input is Record<string, unknown> {
+	return typeof input === 'object' && input !== null;
+}
+
+function parseRecipe(input: unknown) {
+	const inputSemiParsed = isObject(input)
+		? semiParseObject(input, ['ingredients', 'steps', 'timeSpent'])
+		: input;
+
+	return validateRecipe(
+		recipeSchema.cast(inputSemiParsed, {
+			assert: false,
+			stripUnknown: true,
+		}),
+	);
+}
+
+export { parseRecipe };
