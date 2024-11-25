@@ -37,4 +37,8 @@ export class UsersAPI {
 	static getAuthInfo() {
 		return fetch('/api/users/auth');
 	}
+
+	static logOut() {
+		return fetch('/api/users/logout', { method: 'POST' });
+	}
 }

@@ -1,7 +1,10 @@
 import './SignInForm.css';
 
-import { useCallback, FormEvent } from 'react';
+import type { signInUserAction } from '@pages/SignIn/action.ts';
+
+import { useCallback, FormEvent, useEffect } from 'react';
 import { useError } from '@common/hooks/useError.ts';
+import { useActionData } from 'react-router-typesafe';
 
 import { UsernameValidation } from '@helpers/input-validation/username.ts';
 import { PasswordValidation } from '@helpers/input-validation/password.ts';
@@ -11,8 +14,11 @@ import { TextInput } from '@common/components/TextInput.tsx';
 import { PasswordInput } from '@common/components/PasswordInput.tsx';
 
 export function SignInForm() {
+	const actionErrorInfo = useActionData<typeof signInUserAction>();
+
 	const [usernameValidation, updateUsernameValidation] = useError();
 	const [passwordValidation, updatePasswordValidation] = useError();
+	const [generalErrorMessage, updateGeneralErrorMessage] = useError();
 
 	const handleOnUsernameChange = useCallback((username: unknown) => {
 		const { success, error } = UsernameValidation.login(username);
@@ -51,11 +57,47 @@ export function SignInForm() {
 		[updateUsernameValidation, updatePasswordValidation],
 	);
 
+	useEffect(() => {
+		if (!actionErrorInfo) return;
+
+		const { status } = actionErrorInfo;
+
+		if (status === 401) {
+			return updatePasswordValidation('Invalid password.');
+		}
+
+		if (status === 404) {
+			return updateUsernameValidation('User not found.');
+		}
+
+		setTimeout(() => {
+			updateGeneralErrorMessage(null);
+		}, 6000);
+
+		if (status === 422) {
+			return updateGeneralErrorMessage('Invalid data.');
+		}
+
+		if (status === 500) {
+			return updateGeneralErrorMessage(
+				'Something went wrong. Try again later.',
+			);
+		}
+
+		updateGeneralErrorMessage('Unexpected error has occurred.');
+	}, [
+		actionErrorInfo,
+		updatePasswordValidation,
+		updateUsernameValidation,
+		updateGeneralErrorMessage,
+	]);
+
 	return (
 		<section className="user-login">
 			<FormBase
 				formLabel="Sign in"
 				onSubmit={handleOnSubmit}
+				generalErrorMessage={generalErrorMessage}
 				method="post"
 				action="/signin"
 			>

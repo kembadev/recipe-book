@@ -42,6 +42,10 @@ const routes: RouteObject[] = [
 
 const router = createBrowserRouter([
 	{
+		path: '/logout',
+		lazy: () => import('./LogOut'),
+	},
+	{
 		path: '/',
 		element: <Root />,
 		errorElement: <ErrorBoundary />,

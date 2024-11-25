@@ -11,6 +11,13 @@ section.input-wrapper>label {
 
 section.input-wrapper>div em {
   font-size: 0.6em;
+  animation: 350ms linear 0s input-error-popup;
+}
+
+@keyframes input-error-popup {
+  from {
+    background-color: var(--grey);
+  }
 }
 
 section.input-wrapper input {

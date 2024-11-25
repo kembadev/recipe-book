@@ -87,12 +87,8 @@
 .nav-bar.dark {
   border-bottom: 1px solid var(--dark-border-color);
 
-  .nav-bar__start button {
-    color: var(--light-main-bg-color);
-  }
-
   .nav-bar__end>div>section::before {
-    background-color: #c3c3c3;
+    background-color: var(--grey);
   }
 
   .overlay-search-bar__wrapper {
@@ -102,10 +98,6 @@
 
 .nav-bar.light {
   border-bottom: 1px solid var(--light-border-color);
-
-  .nav-bar__start button {
-    color: var(--dark-main-bg-color);
-  }
 
   .nav-bar__end>div>section::before {
     background-color: #222;

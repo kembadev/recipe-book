@@ -1,15 +1,12 @@
 import { Result } from '@monorepo/shared';
 
-type ValidationResult = Result<null, null> | Result<null, Error>;
-
 export class UsernameValidation {
-	static registration(username: unknown): ValidationResult {
+	static #validateUsernameBase(username: unknown) {
 		if (typeof username !== 'string') {
 			return Result.failed(new Error('The username must be a string.'));
 		}
 
-		const usernameLength = username.length;
-		if (usernameLength < 1 || usernameLength > 14) {
+		if (username.length < 1 || username.length > 14) {
 			return Result.failed(
 				new Error(
 					'The username length must be equal to or greater than 7 and equal to or less than 14.',
@@ -17,16 +14,26 @@ export class UsernameValidation {
 			);
 		}
 
-		if (!/^[a-zA-Z0-9]+$/.test(username)) {
+		return Result.success(username);
+	}
+
+	static registration(username: unknown) {
+		const baseValidation = this.#validateUsernameBase(username);
+
+		const { success, value: validatedUsername } = baseValidation;
+
+		if (!success) return baseValidation;
+
+		if (!/^[a-zA-Z0-9]+$/.test(validatedUsername)) {
 			return Result.failed(
 				new Error('The username must only contain letters and/or numbers.'),
 			);
 		}
 
-		return Result.success(null);
+		return Result.success(baseValidation);
 	}
 
 	static login(username: unknown) {
-		return this.registration(username);
+		return this.#validateUsernameBase(username);
 	}
 }

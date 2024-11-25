@@ -10,6 +10,7 @@ import { Form } from 'react-router-dom';
 interface FormBaseProps {
 	children: ReactNode;
 	formLabel: string;
+	generalErrorMessage?: string | null;
 	submitLabel?: string;
 	action?: string;
 	method?: HTMLFormMethod;
@@ -20,6 +21,7 @@ export function FormBase({
 	children,
 	formLabel,
 	submitLabel = 'Submit',
+	generalErrorMessage = null,
 	action,
 	method,
 	onSubmit,
@@ -36,6 +38,15 @@ export function FormBase({
 			<fieldset className={theme}>
 				<legend>{formLabel}</legend>
 				{children}
+				{generalErrorMessage && (
+					<strong
+						aria-label="General error message"
+						role="alert"
+						aria-live="assertive"
+					>
+						{generalErrorMessage}
+					</strong>
+				)}
 				<button type="submit">{submitLabel}</button>
 			</fieldset>
 		</Form>

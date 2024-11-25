@@ -40,8 +40,8 @@
   border-radius: var(--border-radius);
   font-size: 0.95em;
   position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  top: calc(100% + 16px);
+  right: -4px;
 
   &>div+div {
     border-top: 1px solid var(--menu-border-color);
@@ -51,7 +51,7 @@
 .profile-wrapper__user-menu::before {
   content: "";
   display: block;
-  border-width: 8px;
+  border-width: 12px;
   border-style: solid;
   border-color: transparent transparent var(--menu-border-color) transparent;
   position: absolute;
@@ -86,7 +86,11 @@
     height: 18px;
   }
 
-  &:hover {
+  &.active {
+    background-color: var(--yellow);
+  }
+
+  &:not(.active):hover {
     background-color: var(--common-hover-color);
   }
 }

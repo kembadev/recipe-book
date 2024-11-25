@@ -12,7 +12,7 @@ import {
 	UserProfileIcon,
 	SignOutIcon,
 } from '@common/components/Icons.tsx';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 interface UserProps {
 	userData: PrivateUser;
@@ -27,16 +27,16 @@ export function RowAuthenticated({ userData }: UserProps) {
 
 	return (
 		<div className={`nav-bar__user ${theme}`}>
-			<Link title="Create new recipe" to="/new-recipe">
+			<NavLink title="Create new recipe" to="/new-recipe">
 				<SVGWrapperButton size="small">
 					<PlusIcon />
 				</SVGWrapperButton>
-			</Link>
-			<Link title="Saved recipes" to="/saved-recipes">
+			</NavLink>
+			<NavLink title="Saved recipes" to="/saved-recipes">
 				<SVGWrapperButton size="small">
 					<BookmarkIcon />
 				</SVGWrapperButton>
-			</Link>
+			</NavLink>
 			<div className="profile-wrapper">
 				<button
 					title="Your profile"
@@ -77,18 +77,18 @@ export function RowAuthenticated({ userData }: UserProps) {
 						<div>
 							<ul>
 								<li>
-									<Link to="/new-recipe">
+									<NavLink to="/new-recipe">
 										<PlusIcon />
 										<span>Create new recipe</span>
-									</Link>
+									</NavLink>
 								</li>
 								<li>
-									<Link to="/saved-recipes">
+									<NavLink to="/saved-recipes">
 										<BookmarkIcon />
 										<span>
 											Saved recipes {`(${userData.savedRecipes.length ?? 0})`}
 										</span>
-									</Link>
+									</NavLink>
 								</li>
 							</ul>
 						</div>

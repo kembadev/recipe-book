@@ -1,7 +1,10 @@
 import './SignUpForm.css';
 
-import { useCallback, FormEvent } from 'react';
+import type { createUserAction } from '@pages/SignUp/action.ts';
+
+import { useCallback, FormEvent, useEffect } from 'react';
 import { useError } from '@common/hooks/useError.ts';
+import { useActionData } from 'react-router-typesafe';
 
 import { UsernameValidation } from '@helpers/input-validation/username.ts';
 import { PasswordValidation } from '@helpers/input-validation/password.ts';
@@ -11,8 +14,11 @@ import { TextInput } from '@common/components/TextInput.tsx';
 import { PasswordInput } from '@common/components/PasswordInput.tsx';
 
 export function SignUpForm() {
+	const actionErrorInfo = useActionData<typeof createUserAction>();
+
 	const [usernameValidation, updateUsernameValidation] = useError();
 	const [passwordValidation, updatePasswordValidation] = useError();
+	const [generalErrorMessage, updateGeneralErrorMessage] = useError();
 
 	const handleOnUsernameChange = useCallback((username: unknown) => {
 		const { success, error } = UsernameValidation.registration(username);
@@ -33,29 +39,58 @@ export function SignUpForm() {
 			const formData = new FormData(e.target as HTMLFormElement);
 			const { name, password } = Object.fromEntries(formData);
 
-			const usernameValidation = UsernameValidation.registration(name);
-			const passwordValidation = PasswordValidation.registration(password);
+			const { success: isValidUsername, error: usernameValidationError } =
+				UsernameValidation.registration(name);
+			const { success: isValidPassword, error: passwordValidationError } =
+				PasswordValidation.registration(password);
 
-			if (usernameValidation.success && passwordValidation.success) return;
+			if (isValidUsername && isValidPassword) return;
 
 			e.preventDefault();
 
-			if (!usernameValidation.success) {
-				updateUsernameValidation(usernameValidation.error.message);
+			if (!isValidUsername) {
+				updateUsernameValidation(usernameValidationError.message);
 			}
 
-			if (!passwordValidation.success) {
-				updatePasswordValidation(passwordValidation.error.message);
+			if (!isValidPassword) {
+				updatePasswordValidation(passwordValidationError.message);
 			}
 		},
 		[updateUsernameValidation, updatePasswordValidation],
 	);
+
+	useEffect(() => {
+		if (!actionErrorInfo) return;
+
+		const { status } = actionErrorInfo;
+
+		if (status === 409) {
+			return updateUsernameValidation('This user already exists.');
+		}
+
+		setTimeout(() => {
+			updateGeneralErrorMessage(null);
+		}, 6000);
+
+		if (status === 422) {
+			return updateGeneralErrorMessage('Invalid data.');
+		}
+
+		if (status === 500) {
+			return updateGeneralErrorMessage(
+				'Something went wrong. Try again later.',
+			);
+		}
+
+		updateGeneralErrorMessage('Unexpected error has occurred.');
+	}, [actionErrorInfo, updateUsernameValidation, updateGeneralErrorMessage]);
 
 	return (
 		<section className="user-registration">
 			<FormBase
 				formLabel="Create account"
 				submitLabel="Create"
+				generalErrorMessage={generalErrorMessage}
 				onSubmit={handleOnSubmit}
 				method="post"
 				action="/signup"

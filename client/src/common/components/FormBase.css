@@ -9,16 +9,6 @@
   padding-top: 8px;
 }
 
-.form-base fieldset.dark {
-  color: var(--dark-main-text-color);
-  border: 2px solid var(--dark-border-color);
-}
-
-.form-base fieldset.light {
-  color: var(--light-main-text-color);
-  border: 2px solid var(--light-border-color);
-}
-
 .form-base fieldset legend {
   font-size: 1.25em;
   font-weight: bold;
@@ -33,4 +23,51 @@
   font-size: 1.15em;
   padding: 2px;
   cursor: pointer;
+}
+
+.form-base fieldset>strong {
+  display: block;
+  border-radius: inherit;
+  text-align: center;
+  font-size: 0.65em;
+  padding: var(--main-padding) 0;
+  animation: 450ms linear 0s general-error-popup;
+}
+
+@keyframes general-error-popup {
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    box-shadow: 0 0 6px var(--general-error-popup-border);
+    opacity: 1;
+  }
+
+  100% {
+    box-shadow: none;
+  }
+}
+
+.form-base fieldset.dark {
+  color: var(--dark-main-text-color);
+  border: 2px solid var(--dark-border-color);
+
+  strong {
+    --general-error-popup-border: var(--dark-secondary-text-color);
+
+    background-color: color-mix(in srgb, #eee 10%, transparent);
+  }
+}
+
+
+.form-base fieldset.light {
+  color: var(--light-main-text-color);
+  border: 2px solid var(--light-border-color);
+
+  strong {
+    --general-error-popup-border: var(--light-secondary-text-color);
+
+    background-color: color-mix(in srgb, #222 15%, transparent);
+  }
 }

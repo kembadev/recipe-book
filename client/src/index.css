@@ -2,23 +2,20 @@
   --dark-main-bg-color: #1a1a1a;
   --dark-main-text-color: #e3e3e3;
   --dark-secondary-text-color: #ff6e1f;
-  --dark-border-color: color-mix(in srgb, #c9c9c9 70%, #222);
+  --dark-border-color: color-mix(in srgb, var(--grey) 70%, #222);
 
   --light-main-bg-color: #fff;
   --light-main-text-color: #1e1e1e;
   --light-secondary-text-color: #d60d13;
-  --light-border-color: color-mix(in srgb, #c9c9c9 20%, #222);
+  --light-border-color: color-mix(in srgb, var(--grey) 20%, #222);
 
   --border-radius: 6px;
   --main-padding: 4px;
-  --common-hover-color: color-mix(in srgb, #c9c9c9 25%, transparent);
+  --common-hover-color: color-mix(in srgb, var(--grey) 25%, transparent);
 
   --blue: #49a8ce;
-  --dark-blue: #2d3845;
-  --violet: #785589;
-  --pink: #d98b91;
-  --light-beige: #dbc4af;
-  --copper-brown: #8c6436;
+  --grey: #c9c9c9;
+  --yellow: #f0ad3a;
 }
 
 html {
