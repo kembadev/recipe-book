@@ -21,3 +21,11 @@ export class UsernameNotAvailableError extends AuthValidationError {
 		super(message);
 	}
 }
+
+export class UnauthorizedError extends AuthValidationError {
+	name = 'UnauthorizedError' as const;
+
+	constructor(message: string) {
+		super(message);
+	}
+}
