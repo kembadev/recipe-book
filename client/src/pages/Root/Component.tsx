@@ -15,7 +15,7 @@ export function Root() {
 	return (
 		<div className={`page ${theme}`}>
 			<header className="page__nav-bar">
-				<NavBar userData={data.value} />
+				<NavBar authData={data.value} />
 			</header>
 			<main className="page__content">
 				<Outlet context={data} />

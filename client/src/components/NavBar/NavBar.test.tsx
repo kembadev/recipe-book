@@ -8,7 +8,7 @@ const router = createMemoryRouter(
 	[
 		{
 			path: '/',
-			element: <NavBar userData={null} />,
+			element: <NavBar authData={null} />,
 		},
 	],
 	{ initialEntries: ['/'] },

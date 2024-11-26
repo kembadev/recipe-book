@@ -1,8 +1,8 @@
-import type { User, PrivateUser } from '@monorepo/shared';
+import type { User } from '@monorepo/shared';
 import type {
 	CreateUser,
 	LoginUser,
-	GetInfo,
+	GetAuthData,
 	UploadAvatar,
 } from '../types/users.js';
 
@@ -16,6 +16,10 @@ import { ExtractFromUser } from '../helpers/ExtractFromUser.js';
 import UsersDB from '../db/local/users.mjs';
 import bcrypt from 'bcrypt';
 
+import {
+	PasswordValidationError,
+	UsernameNotAvailableError,
+} from '../error-handling/auth.js';
 import { generateUniqueFilename } from '../helpers/generateUniqueFilename.js';
 import { Result } from '@monorepo/shared';
 import sharp from 'sharp';
@@ -36,15 +40,12 @@ export class UsersModule {
 				nameInUse.toLowerCase() === name.toLowerCase(),
 		);
 
-		if (userInDB instanceof Error) return userInDB;
+		if (userInDB instanceof Error) return Result.failed(userInDB);
 
 		if (userInDB) {
-			return {
-				success: false,
-				paramsError: {
-					name: 'The user already exists.',
-				},
-			};
+			return Result.failed(
+				new UsernameNotAvailableError('The user already exists.'),
+			);
 		}
 
 		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -58,9 +59,11 @@ export class UsersModule {
 			avatar_filename: null,
 		};
 
-		const _id = await UsersDB.addOne(newUser);
+		const userId = await UsersDB.addOne(newUser);
 
-		return typeof _id === 'string' ? { success: true } : _id;
+		return typeof userId === 'string'
+			? Result.success(null)
+			: Result.failed(userId);
 	};
 
 	static login: LoginUser = async ({ name, password }) => {
@@ -68,59 +71,31 @@ export class UsersModule {
 			(_id, { name: nameInUse }) => nameInUse === name,
 		);
 
-		if (user instanceof Error) return user;
+		if (!user) return;
 
-		if (user === undefined) {
-			return {
-				success: false,
-				paramsError: {
-					name: 'User not found.',
-				},
-			};
-		}
+		if (user instanceof Error) return Result.failed(user);
 
-		const [_id, userData] = user;
-		const { password: hashedPassword, avatar_filename } = userData;
+		const [userId, userData] = user;
+		const { password: hashedPassword } = userData;
 
 		const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
-		if (!isValidPassword) {
-			return {
-				success: false,
-				paramsError: {
-					password: 'Invalid password.',
-				},
-			};
-		}
+		if (isValidPassword) return Result.success({ userId });
 
-		const basePrivateUserData = ExtractFromUser.basePrivateData(userData);
-		const privateUserData: PrivateUser = {
-			...basePrivateUserData,
-			avatar_src: avatar_filename ? `/images/avatars/${avatar_filename}` : null,
-		};
-
-		return {
-			success: true,
-			value: {
-				userId: _id,
-				userData: privateUserData,
-			},
-		};
+		return Result.failed(new PasswordValidationError('Invalid password.'));
 	};
 
-	static getInfo: GetInfo = async userId => {
+	static getAuthData: GetAuthData = async userId => {
 		const user = await UsersDB.findOne(userId);
 
 		if (!Array.isArray(user)) return user;
 
-		const basePrivateUserData = ExtractFromUser.basePrivateData(user[1]);
+		const userData = user[1];
 
-		const { avatar_filename } = user[1];
+		const { name, createdAt } = ExtractFromUser.basePrivateData(userData);
+		const { avatar_filename } = userData;
 
-		return {
-			...basePrivateUserData,
-			avatar_src: avatar_filename ? `/images/avatars/${avatar_filename}` : null,
-		};
+		return { name, createdAt, avatar_filename };
 	};
 
 	static uploadAvatar: UploadAvatar = async ({ userId, file }) => {
@@ -163,7 +138,7 @@ export class UsersModule {
 				});
 
 				if (Array.isArray(user)) {
-					return resolve(Result.success({ filename: avatar_filename }));
+					return resolve(Result.success({ avatar_filename }));
 				}
 
 				await new Promise(resolve => {

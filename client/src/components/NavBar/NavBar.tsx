@@ -1,6 +1,6 @@
 import './NavBar.css';
 
-import type { PrivateUser } from '@monorepo/shared';
+import type { AuthData } from '@src/types/auth.ts';
 
 import { useId, useState } from 'react';
 import useThemeStore from '@stores/theme.ts';
@@ -14,10 +14,10 @@ import { ThemeSwitcher } from '@common/components/ThemeSwitcher.tsx';
 import { UserRelatedSection } from './UserRelatedSection.tsx';
 
 interface NavBarProps {
-	userData: PrivateUser | null;
+	authData: AuthData | null;
 }
 
-export function NavBar({ userData }: NavBarProps) {
+export function NavBar({ authData }: NavBarProps) {
 	const theme = useThemeStore(({ theme }) => theme);
 
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
@@ -74,7 +74,7 @@ export function NavBar({ userData }: NavBarProps) {
 				<div>
 					<ThemeSwitcher />
 					<section>
-						<UserRelatedSection userData={userData} />
+						<UserRelatedSection authData={authData} />
 					</section>
 				</div>
 			</div>

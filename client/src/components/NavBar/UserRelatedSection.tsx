@@ -1,15 +1,15 @@
-import type { PrivateUser } from '@monorepo/shared';
+import type { AuthData } from '@src/types/auth.ts';
 
 import { RowAuthenticated } from './RowAuthenticated.tsx';
 import { NoAuthFallback } from './NoAuthFallback.tsx';
 
 interface NavBarUserInfoProps {
-	userData: PrivateUser | null;
+	authData: AuthData | null;
 }
 
-export function UserRelatedSection({ userData }: NavBarUserInfoProps) {
-	return userData ? (
-		<RowAuthenticated userData={userData} />
+export function UserRelatedSection({ authData }: NavBarUserInfoProps) {
+	return authData ? (
+		<RowAuthenticated authData={authData} />
 	) : (
 		<NoAuthFallback />
 	);

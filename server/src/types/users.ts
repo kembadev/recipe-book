@@ -1,5 +1,9 @@
 import type { User, PrivateUser } from '@monorepo/shared';
 import type { Result } from '@monorepo/shared';
+import type {
+	PasswordValidationError,
+	UsernameNotAvailableError,
+} from '../error-handling/auth.js';
 
 export interface TokenPayloadUser {
 	id: string;
@@ -7,34 +11,44 @@ export interface TokenPayloadUser {
 
 // Module
 
+// ---
 type ProvidedUserInfoRegister = Pick<User, 'name' | 'password'>;
-type ProvidedUserInfoLogin = Pick<User, 'name' | 'password'>;
 
-export type CreateUser = (userInfo: ProvidedUserInfoRegister) => Promise<
-	| Error
-	| { success: true }
-	| {
-			success: false;
-			paramsError: Partial<Record<keyof ProvidedUserInfoRegister, string>>;
-	  }
+export type CreateUser = (
+	userInfo: ProvidedUserInfoRegister,
+) => Promise<
+	| Result<null, Error>
+	| Result<null, UsernameNotAvailableError>
+	| Result<null, null>
 >;
 
-export type LoginUser = (userInfo: ProvidedUserInfoLogin) => Promise<
-	| Error
-	| { success: true; value: { userData: PrivateUser; userId: string } }
-	| {
-			success: false;
-			paramsError: Partial<Record<keyof ProvidedUserInfoLogin, string>>;
-	  }
+// ---
+type ProvidedUserInfoLogin = Pick<
+	ProvidedUserInfoRegister,
+	'name' | 'password'
 >;
 
-export type GetInfo = (
+export type LoginUser = (
+	userInfo: ProvidedUserInfoLogin,
+) => Promise<
+	| undefined
+	| Result<null, Error>
+	| Result<null, PasswordValidationError>
+	| Result<{ userId: string }, null>
+>;
+
+// ---
+type BasicAuthData = Pick<PrivateUser, 'name' | 'createdAt'> &
+	Pick<User, 'avatar_filename'>;
+
+export type GetAuthData = (
 	userId: string,
-) => Promise<Error | PrivateUser | undefined>;
+) => Promise<Error | BasicAuthData | undefined>;
 
+// ---
 type UploadAvatarResult =
 	| Result<null, Error>
-	| Result<{ filename: string }, null>
+	| Result<{ avatar_filename: string }, null>
 	| undefined;
 
 export type UploadAvatar = (props: {

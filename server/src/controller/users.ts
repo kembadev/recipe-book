@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import type { TokenPayloadUser } from 'types/users.js';
+import type { TokenPayloadUser } from '../types/users.js';
 
 import { IS_DEVELOPMENT, SECRET_JWT_KEY } from '../config.js';
 
@@ -8,12 +8,16 @@ import { UsersModule } from '../model/users-local.js';
 
 import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
 import { validateUserRegister, validateUserLogin } from '../schemas/users.js';
+import {
+	PasswordValidationError,
+	UsernameNotAvailableError,
+} from '../error-handling/auth.js';
 
 export class UsersController {
 	static create: RequestHandler = async (req, res) => {
 		const {
 			success: isValidUser,
-			error: validationError,
+			error: bodyValidationError,
 			data,
 		} = validateUserRegister(req.body);
 
@@ -22,50 +26,53 @@ export class UsersController {
 				ResponseSchema.failed({
 					message: 'Invalid request body format.',
 					errorCode: ERROR_CODES.INVALID_PARAMS,
-					details: JSON.parse(validationError.message),
+					details: JSON.parse(bodyValidationError.message),
 				}),
 			);
 
 			return;
 		}
 
-		const result = await UsersModule.create(data);
+		const { success, error } = await UsersModule.create(data);
 
-		if (result instanceof Error) {
-			res.status(500).json(
-				ResponseSchema.failed({
-					message: 'Could not create the user.',
-					errorCode: ERROR_CODES.INTERNAL_ERROR,
-				}),
-			);
-
-			return;
-		}
-
-		if (result.success) {
+		if (success) {
 			res.status(201).json(ResponseSchema.success({ data: null }));
 
 			return;
 		}
 
-		res.status(409).json(
+		if (error instanceof UsernameNotAvailableError) {
+			res.status(409).json(
+				ResponseSchema.failed({
+					message: 'The user already exists.',
+					errorCode: ERROR_CODES.OTHERS,
+				}),
+			);
+
+			return;
+		}
+
+		res.status(500).json(
 			ResponseSchema.failed({
 				message: 'Could not create the user.',
-				errorCode: ERROR_CODES.OTHERS,
-				details: result.paramsError,
+				errorCode: ERROR_CODES.INTERNAL_ERROR,
 			}),
 		);
 	};
 
 	static login: RequestHandler = async (req, res) => {
-		const { success: isValidUser, error, data } = validateUserLogin(req.body);
+		const {
+			success: isValidUser,
+			error: bodyValidationError,
+			data,
+		} = validateUserLogin(req.body);
 
 		if (!isValidUser) {
 			res.status(422).json(
 				ResponseSchema.failed({
 					message: 'Invalid request body format.',
 					errorCode: ERROR_CODES.INVALID_PARAMS,
-					details: JSON.parse(error.message),
+					details: JSON.parse(bodyValidationError.message),
 				}),
 			);
 
@@ -74,49 +81,42 @@ export class UsersController {
 
 		const result = await UsersModule.login(data);
 
-		if (result instanceof Error) {
-			res.status(500).json(
+		if (!result) {
+			res.status(404).json(
 				ResponseSchema.failed({
-					message: 'Could not complete the login.',
-					errorCode: ERROR_CODES.INTERNAL_ERROR,
+					message: 'User not found.',
+					errorCode: ERROR_CODES.NOT_FOUND,
 				}),
 			);
 
 			return;
 		}
 
-		if (!result.success) {
-			const { paramsError } = result;
+		const { success, error, value } = result;
 
-			const statusCode = paramsError.password ? 401 : 404;
-			const errorCode = paramsError.password
-				? ERROR_CODES.UNAUTHORIZED
-				: ERROR_CODES.NOT_FOUND;
+		if (success && typeof SECRET_JWT_KEY === 'string') {
+			const { userId } = value;
 
-			res.status(statusCode).json(
-				ResponseSchema.failed({
-					message: 'Could not complete the login.',
-					errorCode,
-					details: paramsError,
-				}),
-			);
+			const token = jwt.sign({ id: userId }, SECRET_JWT_KEY, {
+				expiresIn: '1h',
+			});
+
+			res
+				.cookie('access_token', token, {
+					httpOnly: true,
+					secure: !IS_DEVELOPMENT,
+					sameSite: 'strict',
+					maxAge: 1000 * 60 * 60,
+				})
+				.json(ResponseSchema.success({ data: null }));
 
 			return;
 		}
 
-		const { userData, userId } = result.value;
-		let token: string;
-
-		try {
-			if (typeof SECRET_JWT_KEY !== 'string') {
-				throw new Error(
-					'SECRET_JWT_KEY may not be defined. Set it in the .env file',
-				);
-			}
-
-			token = jwt.sign({ id: userId }, SECRET_JWT_KEY, { expiresIn: '1h' });
-		} catch (err) {
-			console.error(err);
+		if (success) {
+			console.error(
+				'SECRET_JWT_KEY may not be defined. Set it in the .env file.',
+			);
 
 			res.status(500).json(
 				ResponseSchema.failed({
@@ -128,18 +128,23 @@ export class UsersController {
 			return;
 		}
 
-		res
-			.cookie('access_token', token, {
-				httpOnly: true,
-				secure: !IS_DEVELOPMENT,
-				sameSite: 'strict',
-				maxAge: 1000 * 60 * 60,
-			})
-			.json(
-				ResponseSchema.success({
-					data: userData,
+		if (error instanceof PasswordValidationError) {
+			res.status(401).json(
+				ResponseSchema.failed({
+					message: 'Invalid password.',
+					errorCode: ERROR_CODES.UNAUTHORIZED,
 				}),
 			);
+
+			return;
+		}
+
+		res.status(500).json(
+			ResponseSchema.failed({
+				message: 'Could not complete the login.',
+				errorCode: ERROR_CODES.INTERNAL_ERROR,
+			}),
+		);
 	};
 
 	static logout: RequestHandler = (_req, res) => {
@@ -151,11 +156,11 @@ export class UsersController {
 		);
 	};
 
-	static getInfo: RequestHandler = async (req, res) => {
+	static getAuthData: RequestHandler = async (req, res) => {
 		const user = req.session as TokenPayloadUser;
-		const userInfo = await UsersModule.getInfo(user.id);
+		const authData = await UsersModule.getAuthData(user.id);
 
-		if (!userInfo) {
+		if (!authData) {
 			res.status(404).json(
 				ResponseSchema.failed({
 					message: 'User not found.',
@@ -166,7 +171,7 @@ export class UsersController {
 			return;
 		}
 
-		if (userInfo instanceof Error) {
+		if (authData instanceof Error) {
 			res.status(500).json(
 				ResponseSchema.failed({
 					message: 'Something went wrong.',
@@ -177,7 +182,20 @@ export class UsersController {
 			return;
 		}
 
-		res.json(ResponseSchema.success({ data: userInfo }));
+		const { name, createdAt, avatar_filename } = authData;
+		const avatar_src = avatar_filename
+			? `/images/avatars/${avatar_filename}`
+			: null;
+
+		res.json(
+			ResponseSchema.success({
+				data: {
+					name,
+					createdAt,
+					avatar_src,
+				},
+			}),
+		);
 	};
 
 	static uploadAvatar: RequestHandler = async (req, res) => {
@@ -202,8 +220,8 @@ export class UsersController {
 		const { success, value } = result;
 
 		if (success) {
-			const { filename } = value;
-			const avatar_src = `/images/avatars/${filename}`;
+			const { avatar_filename } = value;
+			const avatar_src = `/images/avatars/${avatar_filename}`;
 
 			res.status(201).json(ResponseSchema.success({ data: { avatar_src } }));
 

@@ -1,6 +1,6 @@
 import './RowAuthenticated.css';
 
-import type { PrivateUser } from '@monorepo/shared';
+import type { AuthData } from '@src/types/auth.ts';
 
 import { useId, useState } from 'react';
 import useThemeStore from '@stores/theme.ts';
@@ -15,10 +15,10 @@ import {
 import { Link, NavLink } from 'react-router-dom';
 
 interface UserProps {
-	userData: PrivateUser;
+	authData: AuthData;
 }
 
-export function RowAuthenticated({ userData }: UserProps) {
+export function RowAuthenticated({ authData }: UserProps) {
 	const theme = useThemeStore(({ theme }) => theme);
 
 	const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
@@ -46,7 +46,7 @@ export function RowAuthenticated({ userData }: UserProps) {
 					aria-haspopup="true"
 					onClick={() => setIsProfileMenuVisible(!isProfileMenuVisible)}
 				>
-					<img src={userData.avatar_src ?? '/profile-picture-template.webp'} />
+					<img src={authData.avatar_src ?? '/profile-picture-template.webp'} />
 				</button>
 				{isProfileMenuVisible && (
 					<section
@@ -56,12 +56,12 @@ export function RowAuthenticated({ userData }: UserProps) {
 						role="menu"
 					>
 						<div>
-							<strong aria-label="User's name">{userData.name}</strong>
+							<strong aria-label="User's name">{authData.name}</strong>
 						</div>
 						<div>
 							<ul>
 								<li>
-									<Link to={`/profile/${userData.name}`}>
+									<Link to={`/profile/${authData.name}`}>
 										<UserProfileIcon />
 										<span>Your profile</span>
 									</Link>
@@ -85,9 +85,7 @@ export function RowAuthenticated({ userData }: UserProps) {
 								<li>
 									<NavLink to="/saved-recipes">
 										<BookmarkIcon />
-										<span>
-											Saved recipes {`(${userData.savedRecipes.length ?? 0})`}
-										</span>
+										<span>Saved recipes</span>
 									</NavLink>
 								</li>
 							</ul>

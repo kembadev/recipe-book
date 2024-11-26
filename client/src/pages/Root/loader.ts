@@ -1,4 +1,5 @@
-import type { ResponseSchema, PrivateUser } from '@monorepo/shared';
+import type { ResponseSchema } from '@monorepo/shared';
+import type { AuthData } from '@src/types/auth.ts';
 
 import { IS_DEVELOPMENT } from '@config';
 
@@ -16,7 +17,7 @@ export const getUserAuthLoader = makeLoader(async () => {
 	try {
 		const { data: userData } = (await res.json()) as ResponseSchema<
 			true,
-			PrivateUser
+			AuthData
 		>;
 
 		data = userData;

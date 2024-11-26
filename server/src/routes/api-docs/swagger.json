@@ -328,6 +328,35 @@
           }
         }
       },
+      "NullDataSuccessResBody": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "enum": [
+              null
+            ]
+          },
+          "errorCode": {
+            "enum": [
+              null
+            ]
+          },
+          "details": {
+            "enum": [
+              null
+            ]
+          }
+        }
+      },
       "RecipeImageSrc": {
         "type": "string",
         "example": "/images/recipes/1233154627811_256613.jpg"
@@ -376,33 +405,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        true
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "details": {
-                      "enum": [
-                        null
-                      ]
-                    }
-                  }
+                  "$ref": "#/components/schemas/NullDataSuccessResBody"
                 }
               }
             }
@@ -506,7 +509,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResBodyWithPrivateUserData"
+                  "$ref": "#/components/schemas/NullDataSuccessResBody"
                 }
               }
             }
@@ -515,7 +518,7 @@
             "$ref": "#/components/responses/400InvalidJSON"
           },
           "401": {
-            "description": "Some of the authentication methods provided do not match those of the intended user.",
+            "description": "Indicates that the password is invalid.",
             "content": {
               "application/json": {
                 "schema": {
@@ -554,41 +557,7 @@
             }
           },
           "404": {
-            "description": "Some of the identification methods provided do not match any user in the databases.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "enum": [
-                        null
-                      ]
-                    },
-                    "errorCode": {
-                      "type": "string",
-                      "default": "NOT_FOUND"
-                    },
-                    "details": {
-                      "type": "object",
-                      "description": "An object that contains information about the property/ies that indentifies the user and whose values never match any in the databases.",
-                      "example": {
-                        "name": "User not found."
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/404RequestingUserNotFound"
           },
           "422": {
             "$ref": "#/components/responses/422GenericDetailedInvalidParams"
@@ -761,7 +730,44 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResBodyWithPrivateUserData"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "lisa"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "avatar_src": {
+                          "$ref": "#/components/schemas/UserAvatarSrc"
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
                 }
               }
             }

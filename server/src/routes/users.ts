@@ -26,5 +26,5 @@ usersRouter.post(
 
 // usersRouter.delete('/', UsersController.delete);
 
-usersRouter.get('/auth', authorizationMiddleware, UsersController.getInfo);
+usersRouter.get('/auth', authorizationMiddleware, UsersController.getAuthData);
 // usersRouter.get('/:username', UsersController.getProfile);
