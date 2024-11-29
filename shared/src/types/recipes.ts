@@ -22,8 +22,16 @@ export type PrivateRecipe = Pick<
 	| 'recipeYield'
 	| 'visibility'
 > & {
+	id: string;
 	creator: string | null;
 	image_src: Recipe['image_filename'];
 };
 
 export type PublicRecipe = Omit<PrivateRecipe, 'visibility'>;
+
+export type RecipePreview = Pick<
+	PrivateRecipe,
+	'id' | 'title' | 'description' | 'createdAt' | 'creator' | 'image_src'
+> & {
+	totalTimeSpent: number;
+};

@@ -1,6 +1,6 @@
 import './RowAuthenticated.css';
 
-import type { AuthData } from '@src/types/auth.ts';
+import type { AuthData } from '@monorepo/shared';
 
 import { useId, useState } from 'react';
 import useThemeStore from '@stores/theme.ts';

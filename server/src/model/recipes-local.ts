@@ -124,15 +124,17 @@ export class RecipesModule {
 
 		const creator = recipeOwner?.[1].name ?? null;
 
-		// independently if the recipe is either private or public,
-		// send the full recipe because it owns to the requesting user
+		const baseValue = { id: recipeId, creator, image_filename };
+
+		// independently if the recipe is either private or public, send
+		// the full private recipe data because the requesting user owns it
 		if (userId === recipeCreatorId) {
 			const basePrivateRecipeData =
 				ExtractFromRecipe.basePrivateData(recipeData);
 
 			return {
 				isPartialBody: false,
-				value: { ...basePrivateRecipeData, image_filename, creator },
+				value: { ...basePrivateRecipeData, ...baseValue },
 			};
 		}
 
@@ -140,7 +142,7 @@ export class RecipesModule {
 
 		return {
 			isPartialBody: true,
-			value: { ...basePublicRecipeData, image_filename, creator },
+			value: { ...basePublicRecipeData, ...baseValue },
 		};
 	};
 

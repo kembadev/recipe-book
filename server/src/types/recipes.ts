@@ -3,6 +3,7 @@ import type {
 	Recipe,
 	PrivateRecipe,
 	PublicRecipe,
+	RecipePreview,
 } from '@monorepo/shared';
 
 // Module
@@ -41,19 +42,9 @@ export type GetById = (info: {
 >;
 
 // --
-export type RecipePreview = Pick<
-	Recipe,
-	'title' | 'description' | 'createdAt'
-> & {
-	id: string;
-	creator: string | null;
-	totalTimeSpent: number;
-	image_src: Recipe['image_filename'];
-};
+type BaseRecipePreview = Omit<RecipePreview, 'image_src'> & ImageFileName;
 
 export type GetAll = (props: {
 	title: string;
 	page: number;
-}) => Promise<
-	Error | (Omit<RecipePreview, 'image_src'> & Pick<Recipe, 'image_filename'>)[]
->;
+}) => Promise<Error | BaseRecipePreview[]>;

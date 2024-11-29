@@ -1059,6 +1059,10 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
                         "title": {
                           "type": "string"
                         },
@@ -1144,6 +1148,10 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
                         "title": {
                           "type": "string"
                         },

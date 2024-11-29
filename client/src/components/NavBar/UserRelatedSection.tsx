@@ -1,4 +1,4 @@
-import type { AuthData } from '@src/types/auth.ts';
+import type { AuthData } from '@monorepo/shared';
 
 import { RowAuthenticated } from './RowAuthenticated.tsx';
 import { NoAuthFallback } from './NoAuthFallback.tsx';

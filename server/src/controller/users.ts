@@ -6,7 +6,7 @@ import { IS_DEVELOPMENT, SECRET_JWT_KEY } from '../config.js';
 import jwt from 'jsonwebtoken';
 import { UsersModule } from '../model/users-local.js';
 
-import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
+import { ResponseSchema, ERROR_CODES, type AuthData } from '@monorepo/shared';
 import { validateUserRegister, validateUserLogin } from '../schemas/users.js';
 import {
 	PasswordValidationError,
@@ -187,15 +187,13 @@ export class UsersController {
 			? `/images/avatars/${avatar_filename}`
 			: null;
 
-		res.json(
-			ResponseSchema.success({
-				data: {
-					name,
-					createdAt,
-					avatar_src,
-				},
-			}),
-		);
+		const data: AuthData = {
+			name,
+			createdAt,
+			avatar_src,
+		};
+
+		res.json(ResponseSchema.success({ data }));
 	};
 
 	static uploadAvatar: RequestHandler = async (req, res) => {

@@ -1,11 +1,17 @@
-import type { Recipe, PrivateRecipe, PublicRecipe } from '@monorepo/shared';
-import type { RecipePreview } from '../types/recipes.js';
+import type {
+	Recipe,
+	PrivateRecipe,
+	PublicRecipe,
+	RecipePreview,
+} from '@monorepo/shared';
 
-type BasePrivateRecipeData = Omit<PrivateRecipe, 'creator' | 'image_src'>;
+type OmitFromRecipe = 'id' | 'creator' | 'image_src';
 
-type BasePublicRecipeData = Omit<PublicRecipe, 'creator' | 'image_src'>;
+type BasePrivateRecipeData = Omit<PrivateRecipe, OmitFromRecipe>;
 
-type BaseRecipePreview = Omit<RecipePreview, 'creator' | 'id' | 'image_src'> &
+type BasePublicRecipeData = Omit<PublicRecipe, OmitFromRecipe>;
+
+type BaseRecipePreview = Omit<RecipePreview, OmitFromRecipe> &
 	Pick<Recipe, 'image_filename'>;
 
 export class ExtractFromRecipe {

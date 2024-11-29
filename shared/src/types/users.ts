@@ -18,3 +18,5 @@ export type PrivateUser = Pick<
 };
 
 export type PublicUser = Omit<PrivateUser, 'savedRecipes'>;
+
+export type AuthData = Pick<PrivateUser, 'name' | 'createdAt' | 'avatar_src'>;

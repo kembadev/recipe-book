@@ -1,7 +1,11 @@
 import type { RequestHandler } from 'express';
 import type { TokenPayloadUser } from '../types/users.js';
 
-import { ResponseSchema, ERROR_CODES } from '@monorepo/shared';
+import {
+	ResponseSchema,
+	ERROR_CODES,
+	type RecipePreview,
+} from '@monorepo/shared';
 import { RecipesModule } from '../model/recipes-local.js';
 import { parseRecipe } from '../schemas/recipes.js';
 
@@ -135,10 +139,12 @@ export class RecipesController {
 			return;
 		}
 
-		const data = recipes.map(({ image_filename, ...rest }) => ({
-			image_src: image_filename ? `/images/recipes/${image_filename}` : null,
-			...rest,
-		}));
+		const data: RecipePreview[] = recipes.map(
+			({ image_filename, ...rest }) => ({
+				image_src: image_filename ? `/images/recipes/${image_filename}` : null,
+				...rest,
+			}),
+		);
 
 		res.json(ResponseSchema.success({ data }));
 	};
