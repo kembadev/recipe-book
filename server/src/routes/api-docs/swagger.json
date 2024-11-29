@@ -359,10 +359,12 @@
       },
       "RecipeImageSrc": {
         "type": "string",
+        "nullable": true,
         "example": "/images/recipes/1233154627811_256613.jpg"
       },
       "UserAvatarSrc": {
         "type": "string",
+        "nullable": true,
         "example": "/images/avatars/1233154627811_256613.jpg"
       },
       "400GenericResBody": {
@@ -933,6 +935,93 @@
             }
           }
         }
+      }
+    },
+    "/api/recipes/previews": {
+      "get": {
+        "summary": "Get a list of recipe previews",
+        "responses": {
+          "200": {
+            "description": "Sent a list of recipe previews whose title matches the desired title specified in the query title param, or a random recipe if not.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "BBQ Chicken"
+                        },
+                        "description": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "creator": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "image_src": {
+                          "$ref": "#/components/schemas/RecipeImageSrc"
+                        },
+                        "totalTimeSpent": {
+                          "type": "number",
+                          "description": "Total time to make the recipe expressed in seconds."
+                        }
+                      }
+                    },
+                    "errorCode": {
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "details": {
+                      "enum": [
+                        null
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalError"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "schema": {
+              "type": "string"
+            },
+            "example": "bbq chicken"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            },
+            "example": 2
+          }
+        ]
       }
     },
     "/api/recipes/{id}": {

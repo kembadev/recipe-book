@@ -109,4 +109,37 @@ export class RecipesController {
 
 		res.json(ResponseSchema.success({ data }));
 	};
+
+	static getPreviews: RequestHandler = async (req, res) => {
+		const { title: queryTitle, page: queryPage } = req.query;
+
+		let queryPageNumber;
+
+		if (typeof queryPage === 'string') {
+			queryPageNumber = Number(queryPage);
+		}
+
+		const page = queryPageNumber || 1;
+		const title = typeof queryTitle === 'string' ? queryTitle : '';
+
+		const recipes = await RecipesModule.getPreviews({ title, page });
+
+		if (recipes instanceof Error) {
+			res.status(500).json(
+				ResponseSchema.failed({
+					message: 'Something went wrong.',
+					errorCode: ERROR_CODES.INTERNAL_ERROR,
+				}),
+			);
+
+			return;
+		}
+
+		const data = recipes.map(({ image_filename, ...rest }) => ({
+			image_src: image_filename ? `/images/recipes/${image_filename}` : null,
+			...rest,
+		}));
+
+		res.json(ResponseSchema.success({ data }));
+	};
 }

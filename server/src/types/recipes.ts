@@ -7,6 +7,7 @@ import type {
 
 // Module
 
+// --
 export type CreateRecipe = (info: {
 	data: RecipeSchema;
 	userId: string;
@@ -23,6 +24,7 @@ export type CreateRecipe = (info: {
 	  }
 >;
 
+// --
 type ImageFileName = Pick<Recipe, 'image_filename'>;
 
 type BasePublicRecipeData = Omit<PublicRecipe, 'image_src'> & ImageFileName;
@@ -36,4 +38,22 @@ export type GetById = (info: {
 	| undefined
 	| { isPartialBody: true; value: BasePublicRecipeData }
 	| { isPartialBody: false; value: BasePrivateRecipeData }
+>;
+
+// --
+export type RecipePreview = Pick<
+	Recipe,
+	'title' | 'description' | 'createdAt'
+> & {
+	id: string;
+	creator: string | null;
+	totalTimeSpent: number;
+	image_src: Recipe['image_filename'];
+};
+
+export type GetAll = (props: {
+	title: string;
+	page: number;
+}) => Promise<
+	Error | (Omit<RecipePreview, 'image_src'> & Pick<Recipe, 'image_filename'>)[]
 >;

@@ -29,7 +29,7 @@ recipesRouter.post(
 	RecipesController.create,
 );
 
-// recipesRouter.get('/', RecipesController.getAll);
+recipesRouter.get('/previews', RecipesController.getPreviews);
 recipesRouter.get('/:id', RecipesController.getById);
 
 // recipesRouter.patch('/:id', RecipesController.updateById)

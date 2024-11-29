@@ -1,4 +1,4 @@
-import type { CreateRecipe, GetById } from '../types/recipes.js';
+import type { CreateRecipe, GetById, GetAll } from '../types/recipes.js';
 import type { Recipe } from '@monorepo/shared';
 
 import { fileURLToPath } from 'node:url';
@@ -11,6 +11,7 @@ import UsersDB from '../db/local/users.mjs';
 
 import { generateUniqueFilename } from '../helpers/generateUniqueFilename.js';
 import sharp from 'sharp';
+import { getTextComparator } from '../lib/textComparator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,8 @@ if (!fs.existsSync(recipeImagePathUrl)) {
 }
 
 export class RecipesModule {
+	static #recipesPerPage = 10;
+
 	static create: CreateRecipe = async ({ data, userId, file }) => {
 		const targetUser = await UsersDB.findOne(userId);
 
@@ -139,5 +142,48 @@ export class RecipesModule {
 			isPartialBody: true,
 			value: { ...basePublicRecipeData, image_filename, creator },
 		};
+	};
+
+	static getPreviews: GetAll = async ({ title, page }) => {
+		const compareTitle = getTextComparator(title);
+
+		const listOfBaseRecipePreviews = await RecipesDB.getAll(
+			(id, recipeData) => {
+				const { title: recipeTitle, createdBy, visibility } = recipeData;
+
+				if (visibility === 'private' || !compareTitle(recipeTitle)) return;
+
+				const baseRecipePreview = ExtractFromRecipe.basePreview(recipeData);
+
+				return { id, createdBy, ...baseRecipePreview };
+			},
+			{ limit: 10, offset: (page - 1) * this.#recipesPerPage },
+		);
+
+		if (listOfBaseRecipePreviews instanceof Error) {
+			return listOfBaseRecipePreviews;
+		}
+
+		const recipesOwnerId = listOfBaseRecipePreviews.map(
+			({ createdBy }) => createdBy,
+		);
+
+		const recipesOwners = await UsersDB.getAll((id, { name }) => {
+			if (recipesOwnerId.includes(id)) return { userId: id, name };
+		});
+
+		if (recipesOwners instanceof Error) return recipesOwners;
+
+		const listOfRecipePreviews = listOfBaseRecipePreviews.map(
+			({ id, createdBy, ...rest }) => {
+				const owner = recipesOwners.find(({ userId }) => userId === createdBy);
+
+				const creator = owner?.name ?? null;
+
+				return { id, creator, ...rest };
+			},
+		);
+
+		return listOfRecipePreviews;
 	};
 }

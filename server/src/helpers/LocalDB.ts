@@ -15,7 +15,23 @@ interface LocalDBConfig<T> {
 }
 
 type Matcher<Q> = string | ((_id: string, value: Q) => boolean);
+
 type Item<Q> = [_id: string, value: Q];
+
+type ItemReturn<Q> = Item<Q> | LocalDBError | undefined;
+
+interface FilterOptions {
+	/** Sets the limit to indicate where the search must stop.
+  For example, if the limit is set to 10, and already 10 items
+  where found, then the search stops immediately */
+	limit?: number;
+	/** Sets the offset from where to start counting the items.
+  For example, if the offset is set to 3, the first 3 items
+  matched are ignore. Values less than 0 are parsed to 0 */
+	offset?: number;
+}
+
+type Filter<Q, R> = (_id: string, value: Q) => (R | void) | Promise<R | void>;
 
 export class LocalDB<Q> {
 	#path: string;
@@ -56,9 +72,7 @@ export class LocalDB<Q> {
 		return null;
 	}
 
-	async findOne(
-		matcher: Matcher<Q>,
-	): Promise<[_id: string, value: Q] | LocalDBError | undefined> {
+	async findOne(matcher: Matcher<Q>): Promise<ItemReturn<Q>> {
 		const { success, error } = await this.#read();
 
 		if (!success) return error;
@@ -67,6 +81,7 @@ export class LocalDB<Q> {
 
 		if (typeof matcher === 'string') {
 			const value = data[matcher];
+
 			return value === undefined ? undefined : [matcher, value];
 		}
 
@@ -77,8 +92,6 @@ export class LocalDB<Q> {
 
 			if (matcher(_id, value)) return [_id, value];
 		}
-
-		return undefined;
 	}
 
 	async addOne(value: Q) {
@@ -96,52 +109,85 @@ export class LocalDB<Q> {
 		return result;
 	}
 
-	async removeOne(matcher: Matcher<Q>) {
+	async removeOne(matcher: Matcher<Q>): Promise<ItemReturn<Q>> {
 		const item = await this.findOne(matcher);
 
 		if (!Array.isArray(item)) return item;
 
 		const [_id] = item;
 
-		return new Promise<Q>(resolve => {
+		return new Promise(resolve => {
 			this.#updateDB(db => {
-				const { [_id]: itemRemoved, ...rest } = db;
-				resolve(itemRemoved);
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const { [_id]: payload, ...rest } = db;
+
 				return rest;
+			}).then(err => {
+				if (err) return resolve(err);
+
+				resolve(item);
 			});
 		});
 	}
 
-	async updateOne(matcher: Matcher<Q>, fn: (value: Q) => Q | Promise<Q>) {
+	async updateOne(
+		matcher: Matcher<Q>,
+		fn: (value: Q) => Q | Promise<Q>,
+	): Promise<ItemReturn<Q>> {
 		const item = await this.findOne(matcher);
 
 		if (!Array.isArray(item)) return item;
 
-		const _id = item[0];
+		const [_id] = item;
 
-		return new Promise<Item<Q>>(resolve => {
+		return new Promise(resolve => {
 			this.#updateDB(async db => {
 				const { [_id]: value, ...rest } = db;
 
 				const updatedValue = await fn(value);
 
-				resolve([_id, updatedValue]);
-
 				return { ...rest, [_id]: updatedValue };
+			}).then(err => {
+				if (err) return resolve(err);
+
+				resolve(item);
 			});
 		});
 	}
 
-	async getAll() {
+	async getAll<R>(filter: Filter<Q, R>, options?: FilterOptions) {
 		const { success, error } = await this.#read();
 
 		if (!success) return error;
 
-		return this.#db.data;
+		const { data } = this.#db;
+
+		const desiredOffset = options?.offset ?? 0;
+		const offset = desiredOffset < 0 ? 0 : Math.round(desiredOffset);
+
+		let matched = 0;
+
+		const list = [];
+
+		for (const _id in data) {
+			if (options?.limit && list.length >= options.limit) break;
+
+			if (!Object.hasOwn(data, _id)) continue;
+
+			const value = await filter(_id, data[_id]);
+
+			if (value !== undefined) {
+				matched++;
+
+				if (matched > offset) list.push(value);
+			}
+		}
+
+		return list;
 	}
 
-	async clearAll() {
-		return await this.#updateDB(() => ({}));
+	clearAll() {
+		return this.#updateDB(() => ({}));
 	}
 
 	/**

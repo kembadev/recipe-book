@@ -105,7 +105,12 @@ export class UsersModule {
 
 		try {
 			manipulatedBuffer = await sharp(file.buffer)
-				.resize({ width: 300, height: 300, fit: 'inside' })
+				.resize({
+					width: 180,
+					height: 180,
+					fit: 'inside',
+					withoutEnlargement: true,
+				})
 				.jpeg()
 				.toBuffer();
 		} catch {
