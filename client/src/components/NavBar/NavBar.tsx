@@ -2,12 +2,19 @@ import './NavBar.css';
 
 import type { AuthData } from '@monorepo/shared';
 
-import { useId, useState } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+	useTransition,
+} from 'react';
 import useThemeStore from '@stores/theme.ts';
 
 import { BarsIcon } from '@common/components/Icons.tsx';
 import { RecipeBookLink } from '@common/components/RecipeBookLink.tsx';
-import { SearchBar } from './SearchBar.tsx';
+import { SearchBar, type SearchBarHandle } from './SearchBar.tsx';
 import { SVGWrapperButton } from '@common/components/SVGWrapperButton.tsx';
 import { SearchIcon, ArrowBackIcon } from '@common/components/Icons.tsx';
 import { ThemeSwitcher } from '@common/components/ThemeSwitcher.tsx';
@@ -18,11 +25,43 @@ interface NavBarProps {
 }
 
 export function NavBar({ authData }: NavBarProps) {
+	// only applies for small screens
+	const [isSearchBarVisible, setIsSearchBarVisible] = useState(false);
+	const [isPending, startTransition] = useTransition();
+
 	const theme = useThemeStore(({ theme }) => theme);
 
-	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+	const inputSearchRef = useRef<SearchBarHandle>(null);
+	const searchBarWrapperRef = useRef<HTMLDivElement>(null);
 
-	const overlaySearchBarId = useId();
+	const searchBarWrapperId = useId();
+
+	const openSearchBar = useCallback(() => {
+		startTransition(() => {
+			setIsSearchBarVisible(true);
+		});
+	}, []);
+
+	const handleClickOutside = useCallback((e: MouseEvent) => {
+		if (
+			searchBarWrapperRef.current &&
+			!searchBarWrapperRef.current.contains(e.target as Node)
+		) {
+			setIsSearchBarVisible(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (isPending || !isSearchBarVisible) return;
+
+		inputSearchRef.current?.focus();
+
+		document.addEventListener('click', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
+	}, [isPending, isSearchBarVisible, handleClickOutside]);
 
 	return (
 		<nav className={`nav-bar ${theme}`}>
@@ -37,39 +76,34 @@ export function NavBar({ authData }: NavBarProps) {
 			</div>
 			<div className="nav-bar__end">
 				<section className="nav-bar__recipes-search">
-					{/* search bar for large screens */}
-					<div className="search-bar__wrapper">
-						<SearchBar />
+					<div
+						id={searchBarWrapperId}
+						ref={searchBarWrapperRef}
+						aria-modal="true"
+						aria-label="Recipes search bar container"
+						className={`search-bar__wrapper ${isSearchBarVisible ? '' : 'hidden'}`}
+						role="search"
+					>
+						<SVGWrapperButton
+							size="medium"
+							aria-label="Close search bar"
+							aria-controls={searchBarWrapperId}
+							onClick={() => setIsSearchBarVisible(false)}
+						>
+							<ArrowBackIcon />
+						</SVGWrapperButton>
+						<SearchBar ref={inputSearchRef} />
 					</div>
-					{/* toggle hidden search bar */}
 					<SVGWrapperButton
 						title="Search"
 						size="medium"
-						aria-label="Search a recipe"
-						aria-expanded={isOverlayVisible}
-						aria-controls={overlaySearchBarId}
+						aria-label="Open search bar"
+						aria-controls={searchBarWrapperId}
 						aria-haspopup="dialog"
-						onClick={() => setIsOverlayVisible(true)}
+						onClick={openSearchBar}
 					>
 						<SearchIcon />
 					</SVGWrapperButton>
-					{/* hidden search bar for small screens */}
-					{isOverlayVisible && (
-						<div
-							id={overlaySearchBarId}
-							className="overlay-search-bar__wrapper"
-							aria-modal="true"
-							role="search"
-						>
-							<SVGWrapperButton
-								size="medium"
-								onClick={() => setIsOverlayVisible(false)}
-							>
-								<ArrowBackIcon />
-							</SVGWrapperButton>
-							<SearchBar autoFocus />
-						</div>
-					)}
 				</section>
 				<div>
 					<ThemeSwitcher />

@@ -1,16 +1,23 @@
 import './SearchBar.css';
 
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import useThemeStore from '@stores/theme.ts';
 
 import { Form } from 'react-router-dom';
 import { SearchIcon } from '@common/components/Icons.tsx';
 
-interface SearchBarProps {
-	autoFocus?: boolean;
+export interface SearchBarHandle {
+	focus: () => void;
 }
 
-export function SearchBar({ autoFocus = false }: SearchBarProps) {
+export const SearchBar = forwardRef<SearchBarHandle>((_, ref) => {
 	const theme = useThemeStore(({ theme }) => theme);
+
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useImperativeHandle(ref, () => ({
+		focus: () => inputRef.current?.focus(),
+	}));
 
 	return (
 		<Form
@@ -19,15 +26,15 @@ export function SearchBar({ autoFocus = false }: SearchBarProps) {
 			action="/recipes"
 		>
 			<input
+				ref={inputRef}
 				name="search"
 				placeholder="type recipe to search for"
 				type="text"
 				autoComplete="off"
-				autoFocus={autoFocus}
 			/>
 			<button title="Search">
 				<SearchIcon />
 			</button>
 		</Form>
 	);
-}
+});

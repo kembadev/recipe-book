@@ -28,12 +28,12 @@ export function RowAuthenticated({ authData }: UserProps) {
 	return (
 		<div className={`nav-bar__user ${theme}`}>
 			<NavLink title="Create new recipe" to="/new-recipe">
-				<SVGWrapperButton size="small">
+				<SVGWrapperButton size="small" aria-label="Create new recipe">
 					<PlusIcon />
 				</SVGWrapperButton>
 			</NavLink>
 			<NavLink title="Saved recipes" to="/saved-recipes">
-				<SVGWrapperButton size="small">
+				<SVGWrapperButton size="small" aria-label="Saved recipes">
 					<BookmarkIcon />
 				</SVGWrapperButton>
 			</NavLink>

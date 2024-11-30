@@ -27,7 +27,53 @@
   gap: 15px;
 }
 
+/* search bar section */
+
+.nav-bar__recipes-search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+
+  .search-bar__wrapper {
+    width: min(100%, 380px);
+  }
+
+  /* open search bar and close search bar buttons */
+  &>button,
+  .search-bar__wrapper>button {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 655px) {
+  .nav-bar__recipes-search .search-bar__wrapper {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 20px;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    &.hidden {
+      display: none;
+    }
+
+    &>button {
+      display: block;
+    }
+  }
+
+  /* open search bar button */
+  .nav-bar__recipes-search>button {
+    display: block;
+  }
+}
+
 /* theme switcher and user related info */
+
 .nav-bar__end>div {
   display: flex;
   align-items: center;
@@ -48,40 +94,6 @@
   }
 }
 
-/* search bar section */
-
-.nav-bar__recipes-search {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.nav-bar__recipes-search .search-bar__wrapper {
-  width: min(100%, 380px);
-}
-
-.nav-bar__recipes-search>button {
-  display: none;
-}
-
-.nav-bar__recipes-search .overlay-search-bar__wrapper {
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 20px;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-
-  form {
-    flex: 1;
-    grid-template-columns: 1fr auto;
-  }
-}
-
 /* themes config */
 
 .nav-bar.dark {
@@ -91,7 +103,7 @@
     background-color: var(--grey);
   }
 
-  .overlay-search-bar__wrapper {
+  .nav-bar__recipes-search .search-bar__wrapper {
     background-color: var(--dark-main-bg-color);
   }
 }
@@ -103,25 +115,7 @@
     background-color: #222;
   }
 
-  .overlay-search-bar__wrapper {
-    background-color: var(--light-main-bg-color);
-  }
-}
-
-@media screen and (min-width: 655px) {
-
-  /*prevent the overlay from shadowing the nav bar */
-  .nav-bar__recipes-search .overlay-search-bar__wrapper {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 655px) {
   .nav-bar__recipes-search .search-bar__wrapper {
-    display: none;
-  }
-
-  .nav-bar__recipes-search>button {
-    display: block;
+    background-color: var(--light-main-bg-color);
   }
 }

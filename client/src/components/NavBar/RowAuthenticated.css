@@ -65,6 +65,10 @@
 
 .profile-wrapper__user-menu>div:last-child {
   display: none;
+
+  li:last-child a {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
 }
 
 .profile-wrapper__user-menu ul {
