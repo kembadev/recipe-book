@@ -44,7 +44,7 @@ export type GetById = (info: {
 // --
 type BaseRecipePreview = Omit<RecipePreview, 'image_src'> & ImageFileName;
 
-export type GetAll = (props: {
+export type GetPreviews = (props: {
 	title: string;
 	page: number;
-}) => Promise<Error | BaseRecipePreview[]>;
+}) => Promise<Error | undefined | BaseRecipePreview[]>;

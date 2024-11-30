@@ -1000,6 +1000,9 @@
               }
             }
           },
+          "404": {
+            "$ref": "#/components/responses/404GenericNotFound"
+          },
           "500": {
             "$ref": "#/components/responses/500InternalError"
           }

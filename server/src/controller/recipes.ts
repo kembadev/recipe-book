@@ -128,6 +128,17 @@ export class RecipesController {
 
 		const recipes = await RecipesModule.getPreviews({ title, page });
 
+		if (!recipes) {
+			res.status(404).json(
+				ResponseSchema.failed({
+					message: 'Recipes not found.',
+					errorCode: ERROR_CODES.NOT_FOUND,
+				}),
+			);
+
+			return;
+		}
+
 		if (recipes instanceof Error) {
 			res.status(500).json(
 				ResponseSchema.failed({

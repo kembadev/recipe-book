@@ -1,4 +1,4 @@
-import type { CreateRecipe, GetById, GetAll } from '../types/recipes.js';
+import type { CreateRecipe, GetById, GetPreviews } from '../types/recipes.js';
 import type { Recipe } from '@monorepo/shared';
 
 import { fileURLToPath } from 'node:url';
@@ -146,7 +146,7 @@ export class RecipesModule {
 		};
 	};
 
-	static getPreviews: GetAll = async ({ title, page }) => {
+	static getPreviews: GetPreviews = async ({ title, page }) => {
 		const compareTitle = getTextComparator(title);
 
 		const listOfBaseRecipePreviews = await RecipesDB.getAll(
@@ -165,6 +165,8 @@ export class RecipesModule {
 		if (listOfBaseRecipePreviews instanceof Error) {
 			return listOfBaseRecipePreviews;
 		}
+
+		if (listOfBaseRecipePreviews.length === 0) return;
 
 		const recipesOwnerId = listOfBaseRecipePreviews.map(
 			({ createdBy }) => createdBy,
